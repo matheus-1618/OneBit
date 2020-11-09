@@ -61,6 +61,8 @@ class Boat(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT/2
+        self.speedx=0
+        self.speedy=0
         self.assets=assets
 
     def shoot (self):
@@ -82,11 +84,55 @@ class Cannonball(pygame.sprite.Sprite):
         pass
 
 game = True
+#Ajuste de velocidade e tempo
+clock=pygame.time.Clock()
+FPS=30
+#Criando as balas de canhões:
+all_sprites = pygame.sprite.Group
+all_cannonballs = pygame.sprite.Group()
+groups = {}
+groups['all_sprites']=all_sprites
+groups['all_cannonballs']=all_cannonballs
+#Criando o navio controlado
+boat= Boat(groups,assets)
+all_sprites.add(boat)
 
 # ===== Loop principal =====
 while game:
+    clock.tick(FPS)
 
+    #Eventos cruciais
+    for event in pygame.event.get():
+        #Ações tomadas pelo jogador:
+        if event.type == pygame.QUIT:
+            game = False
+        #Teclas sendo apertadas
+        if event.type == pygame.KEYDOWN:
+            #Cada tecla tem seu direcionamento
+            if event.key == pygame.K_LEFT:
+                boat.speedx -=10
+            if event.key == pygame.K_RIGHT:
+                boat.speedx +=10
+            if event.key == pygame.K_UP:
+                boat.speedy +=10
+            if event.key == pygame.K_DOWN:
+                boat.speedy -=10
+            if event.key = pygame.K_SPACE:
+                boat.shoot()
+        #Teclas sendo soltas
+        if event.type == pygame.KEYUP:
+            #Cada tecla tem seu direcionamento:
+            if event.key == pygame.K_LEFT:
+                boat.speedx +=10
+            if event.key == pygame.K_RIGHT:
+                boat.speedx -=10
+            if event.key == pygame.K_UP:
+                boat.speedy -=10
+            if event.key == pygame.K_DOWN:
+                boat.speedy +=10
 
+    #Atualizando os estados do game
+    all_sprites.update()
 
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
