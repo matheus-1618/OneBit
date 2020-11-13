@@ -44,7 +44,7 @@ BOAT_WALK_LEFT = ['D0 (3).png']
 BOAT_WALK_RIGHT = ['Navio.png']
 BOAT_WALK_UP = ['D0 (1).png']
 BOAT_WALK_DOWN = ['D0 (2).png']
-BOAT_HIT_RECT = pg.Rect(0, 0, 35, 35)
+BOAT_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
     #Lista de imagem da bola de canhão
 CANNONBALL_IMG = 'bullet.png'
