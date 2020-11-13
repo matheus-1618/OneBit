@@ -20,8 +20,6 @@ from os import path
 from config import *
 from sprites import *
 
-pygame.init()
-
 #----- Criando classe Jogo responsável por atualizações e tratamento de eventos
 
 class Jogo (pygame.sprite.Sprite):
@@ -30,12 +28,12 @@ class Jogo (pygame.sprite.Sprite):
 
         #Inicializando biblioteca
 
-        pyagame.init() 
+        pygame.init() 
         
         #Inicializando Tela:
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption(TITLE)
-        self.clock = pg.time.Clock()
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption(TITLE)
+        self.clock = pygame.time.Clock()
         self.load_data()
 
     #Carregando imagens importantes
@@ -78,7 +76,7 @@ class Jogo (pygame.sprite.Sprite):
         #Começando as variáveis fo código
         
         self.todos_elementos = pygame.sprite.Group()
-        self.cannonballs = pg.sprite.Group()
+        self.cannonballs = pygame.sprite.Group()
     
     def run(self):
 
@@ -100,13 +98,13 @@ class Jogo (pygame.sprite.Sprite):
 
         #Guardando eventos principais ocorridos durante o jogo:
 
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 self.quit()
-            if event.type == pg.KEYDOWN:       
-                if event.key == pg.K_ESCAPE:
+            if event.type == pygame.KEYDOWN:       
+                if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if event.key == pg.K_h:
+                if event.key == pygame.K_h:
                     self.draw_debug = not self.draw_debug
 
     def quit(self):
@@ -116,52 +114,3 @@ class Jogo (pygame.sprite.Sprite):
         pygame.quit()
         sys.exit()
 
-game = True
-#Ajuste de velocidade e tempo
-clock=pygame.time.Clock()
-FPS=30
-
-
-#Criando o navio controlado
-boat= Boat(assets,groups)
-todos_elementos.add(boat)
-
-# ===== Loop principal =====
-while game:
-    clock.tick(FPS)
-
-    #Eventos cruciais
-    for event in pygame.event.get():
-        #Ações tomadas pelo jogador:
-        if event.type == pygame.QUIT:
-            game = False
-        #Teclas sendo apertadas
-        if event.type == pygame.KEYDOWN:
-            #Cada tecla tem seu direcionamento
-            if event.key == pygame.K_LEFT:
-                boat.speedx -=10
-            if event.key == pygame.K_RIGHT:
-                boat.speedx +=10
-            if event.key == pygame.K_UP:
-                boat.speedy +=10
-            if event.key == pygame.K_DOWN:
-                boat.speedy -=10
-            if event.key == pygame.K_SPACE:
-                boat.shoot()
-        #Teclas sendo soltas
-        if event.type == pygame.KEYUP:
-            #Cada tecla tem seu direcionamento:
-            if event.key == pygame.K_LEFT:
-                boat.speedx +=10
-            if event.key == pygame.K_RIGHT:
-                boat.speedx -=10
-            if event.key == pygame.K_UP:
-                boat.speedy -=10
-            if event.key == pygame.K_DOWN:
-                boat.speedy +=10
-
-    #Atualizando os estados do game
-    todos_elementos.update()
-
-# ===== Finalização =====
-pygame.quit()  # Função do PyGame que finaliza os recursos utilizados

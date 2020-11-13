@@ -9,11 +9,11 @@ class Boat(pygame.sprite.Sprite):
 
     def __init__(self, jogo, x, y):
         
-        self.groups = game.todos_elementos
+        self.groups = jogo.todos_elementos
 
         #Inicializando construtor:
 
-        pg.sprite.Sprite.__init__(self, self.groups)
+        pygame.sprite.Sprite.__init__(self, self.groups)
         
         #Configurações gerais
         self.jogo = jogo
@@ -53,6 +53,10 @@ class Boat(pygame.sprite.Sprite):
             self.dir = vec (0,1)
 
         self.last_dir = self.dir #guarda última direção escolhida
+    
+    #Funça
+    def tiro (self):
+
 
     #Atualizando para o game
     def update(self):
