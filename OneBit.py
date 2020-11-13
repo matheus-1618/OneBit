@@ -1,10 +1,10 @@
 """ 
-ONEBIT GAME!
+ONEBIT THE GAME!
 
 Jogo criado por: Leticia Coêlho Barbosa e Matheus Silva
 na disciplina de Design de Software
 
-Professor orientador: Luciano Soares,
+Professor orientador: Luciano Soares
 1A- ENG
 INSPER 2020.2
 
@@ -38,6 +38,48 @@ class Jogo (pygame.sprite.Sprite):
         self.clock = pg.time.Clock()
         self.load_data()
 
+    #Carregando imagens importantes
+    def load_data(self):
+        
+        #especificando os caminhos de busca dos arquivos
+        game_folder = path.dirname(__file__)
+        img_folder = path.join(game_folder,'img')
+        self.boat_img = pygame.image.load(img_folder,BOAT_IMG).convert_alpha()
+        self.cannonball_img=pygame.image.load(img_folder,CANNONBALL_IMG).convert_alpha()
+        
+        #Criando dicionários para guardar os movimentos do navio
+        
+        #Busca arquivos para o movimento para direita
+        self.boat_right = {}
+        for pict in BOAT_WALK_RIGHT:
+            self.boat_right[pict] = pygame.image.load(path.join(IMG_DIR,img)).convert_alpha()
+            self.boat_right[pict] = pygame.transform.scale(self.boat_right[pict],(BOAT_WIDTH,BOAT_HEIGHT))
+
+        #Busca arquivos para o movimento para esquerda
+        self.boat_left = {}
+        for pict in BOAT_WALK_LEFT:
+            self.boat_left[pict] = pygame.image.load(path.join(IMG_DIR,img)).convert_alpha()
+            self.boat_left[pict] = pygame.transform.scale(self.boat_left[pict],(BOAT_WIDTH,BOAT_HEIGHT))  
+
+        #Busca arquivos para o movimento para cima
+        self.boat_up = {}
+        for pict in BOAT_WALK_UP:
+            self.boat_up[pict] = pygame.image.load(path.join(IMG_DIR,img)).convert_alpha()
+            self.boat_up[pict] = pygame.transform.scale(self.boat_up[pict],(BOAT_WIDTH,BOAT_HEIGHT)) 
+
+        #Busca arquivos para o movimento para baixo
+        self.boat_down = {}
+        for pict in BOAT_WALK_DOWN:
+            self.boat_right[pict] = pygame.image.load(path.join(IMG_DIR,img)).convert_alpha()
+            self.boat_right[pict] = pygame.transform.scale(self.boat_down[pict],(BOAT_WIDTH,BOAT_HEIGHT)) 
+
+
+    def new(self):
+        #Começando as variáveis fo código
+        
+        self.todos_elementos = pygame.sprite.Group()
+        self.cannonballs = pg.sprite.Group()
+    
     def run(self):
 
     # Loop do jogo 
@@ -50,6 +92,10 @@ class Jogo (pygame.sprite.Sprite):
             self.update()
             self.draw()
 
+    def update(self):
+        #atualiza os elementos gráficos do jogo
+        self.todos_elementos.update()
+    
     def events(self):
 
         #Guardando eventos principais ocorridos durante o jogo:
@@ -70,73 +116,15 @@ class Jogo (pygame.sprite.Sprite):
         pygame.quit()
         sys.exit()
 
-#Criando dicionario assets:
-
-assets={}
-
-#Carregando imagens:
-map_init = pygame.image.load('./assets/Fundoinicial.jpg').convert()  
-boat_img = pygame.image.load('./assets/navio_inicial.png').convert_alpha()
-cannonball_img = pygame.image.load('./assets/balacanhao_1.png').convert_alpha()
-
-#Redimensionando:
-
-assets['map_init'] = pygame.transform.scale(map_init,(WIDTH,HEIGHT))
-assets['boat_img'] = pygame.transform.scale(boat_img, (BOAT_WIDTH, BOAT_HEIGHT))
-assets['cannonball_img'] = pygame.transform.scale(cannonball_img, (CANNONBALL_WIDTH,CANNONBALL_HEIGHT))
-
-# ----- Inicia estruturas de dados (Classes)
-
-class Boat(pygame.sprite.Sprite):
-    def __init__(self, assets,groups):
-        
-        self.jogo = jogo
-        self.groups = jogo.all_sprites  
-        # Construtor da classe mãe (Sprite).
-        pygame.sprite.Sprite.__init__(self,self.groups)
-
-        self.image = assets['boat_img']
-        self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH / 2
-        self.rect.bottom = HEIGHT/2
-        self.speedx=0
-        self.speedy=0
-        self.assets=assets
-
-    def shoot (self):
-        pass
-
-    def update(self):
-        pass
-
-class Cannonball(pygame.sprite.Sprite):
-    def __init__(self, assets, groups):
-        
-        # Construtor da classe mãe (Sprite).
-        pygame.sprite.Sprite.__init__(self)   
-
-        self.image = assets['cannonball_img']
-        self.rect = self.image.get_rect()
-
-    def update(self):
-        pass
-
 game = True
 #Ajuste de velocidade e tempo
 clock=pygame.time.Clock()
 FPS=30
-#Criando as balas de canhões:
 
-all_sprites = pygame.sprite.Group()
-all_cannonballs = pygame.sprite.Group()
-
-groups = {}
-groups['all_sprites']=all_sprites
-groups['all_cannonballs']=all_cannonballs
 
 #Criando o navio controlado
 boat= Boat(assets,groups)
-all_sprites.add(boat)
+todos_elementos.add(boat)
 
 # ===== Loop principal =====
 while game:
@@ -173,7 +161,7 @@ while game:
                 boat.speedy +=10
 
     #Atualizando os estados do game
-    all_sprites.update()
+    todos_elementos.update()
 
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados

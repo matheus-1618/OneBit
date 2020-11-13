@@ -35,15 +35,17 @@ GRAY = (192, 192, 192)
 
 BOAT_WIDTH = 120
 BOAT_HEIGHT = 120
-PLAYER_SPEED = 280
+BOAT_SPEED = 280
 
     #Lista de Imagens navio:
 
-PLAYER_IMG = 'Navio.png'
-PLAYER_WALK_LEFT = ['D0 (3).png']
-PLAYER_WALK_RIGHT = ['Navio.png']
-PLAYER_WALK_UP = ['D0 (1).png']
-PLAYER_WALK_DOWN = ['D0 (2).png']
+BOAT_IMG = 'Navio.png'
+BOAT_WALK_LEFT = ['D0 (3).png']
+BOAT_WALK_RIGHT = ['Navio.png']
+BOAT_WALK_UP = ['D0 (1).png']
+BOAT_WALK_DOWN = ['D0 (2).png']
+BOAT_HIT_RECT = pg.Rect(0, 0, 35, 35)
 
-PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
+    #Lista de imagem da bola de canhão
+CANNONBALL_IMG = 'bullet.png'
 
