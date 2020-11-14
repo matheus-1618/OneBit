@@ -3,8 +3,11 @@ from os import path
 
 #Definindo Gerais:
 
+#Diretórios acessados
 GAME_DIR = path.dirname(__file__)
 IMG_DIR = path.join(GAME_DIR, 'img')
+FONT_DIR = path.join(GAME_DIR, 'assets', 'fontes')
+MUSIC_DIR = path.join(GAME_DIR, 'assets', 'sounds', 'musica')
 
 TITLE= 'ONE BIT GAME'
 
@@ -23,16 +26,21 @@ dt = clock.tick(FPS)/1000
 
 # Cores utilizadas
 
-BLACK = (0, 0, 0)
-YELLOW = (255, 255, 0)
+WHITE = (255, 255, 255)
+DARKGREY = (40, 40, 40)
+LIGHTGREY = (100, 100, 100)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-WHITE = (255, 255, 255)
+LIGHTRED = (155, 0, 0)
+YELLOW = (255, 255, 0)
 BROWN = (106, 55, 5)
+CYAN = (0, 255, 255)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 ORANGE = (255, 140, 0)
 BLUE = (0, 0, 255)
-LIGHTGREY = (100, 100, 100)
 GRAY = (192, 192, 192)
+
 
 #Configurações gerais navio :
 

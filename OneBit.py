@@ -29,6 +29,9 @@ class Jogo (pygame.sprite.Sprite):
         #Inicializando biblioteca
 
         pygame.init() 
+
+        #Inicializando a trilha sonora
+        pygame.mixer.init()
         
         #Inicializando Tela:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -52,6 +55,26 @@ class Jogo (pygame.sprite.Sprite):
         #Imagens sprites
         self.boat_img = pygame.image.load(img_folder,BOAT_IMG).convert_alpha()
         self.cannonball_img=pygame.image.load(img_folder,CANNONBALL_IMG).convert_alpha()
+
+        #Fontes utilizadas
+        self.romulus = path.join(FONT_DIR, 'romulus.TTF')
+        self.romulus_20 = pygame.font.Font(self.romulus, 20)
+        self.romulus_30 = pygame.font.Font(self.romulus, 30)
+        self.romulus_40 = pygame.font.Font(self.romulus, 40)
+        self.romulus_80 = pygame.font.Font(self.romulus, 80)
+        
+        #Inicializando músicas de fundo-da abertura
+        self.abertura = pygame.mixer.Channel(5)
+        self.abertura.set_volume(0.3)
+        abertura = pygame.mixer.music.load(path.join(MUSIC_DIR, 'pirates.ogg'))
+        pygame.mixer.music.load(path.join(MUSIC_DIR, 'pirates.ogg'))
+        pygame.mixer.music.set_volume(0.8)
+        #Dicionário com os efeitos sonoros utilziados
+        self.sound_effects = {}
+        self.sound_effects['abertura'] = pygame.mixer.Sound(path.join(MUSIC_DIR, 'ONE_PIECE.ogg'))
+        self.sound_effects['winner'] = pygame.mixer.Sound(path.join(MUSIC_DIR, 'pirates.ogg'))
+
+    
         
         #Criando dicionários para guardar os movimentos do navio
         #Busca arquivos para o movimento para direita
@@ -86,6 +109,8 @@ class Jogo (pygame.sprite.Sprite):
         self.cannonballs = pygame.sprite.Group()
     
     def run(self):
+    #Iniciando o mixer de música
+    pygame.mixer.music.play (loops=-1)
 
     # Loop do jogo 
 
@@ -96,10 +121,13 @@ class Jogo (pygame.sprite.Sprite):
             self.events()
             self.update()
             self.draw()
+    
+    #FAZER FUNÇÃO "INIT SCREEN"
 
     def update(self):
         #atualiza os elementos gráficos do jogo
         self.todos_elementos.update()
+        self.camera.update(self.player)
 
     def draw_grid(self):
         #Desenhando linhas (grid) na tela
@@ -115,6 +143,13 @@ class Jogo (pygame.sprite.Sprite):
         pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         self.screen.blit(self.map_img)
         pg.display.flip()
+
+    #Gerando textos na tela
+    def draw_text(self, text, font, color, x, y): 
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.center = (x,y)
+        self.screen.blit(text_surface, text_rect)
 
     def events(self):
 
@@ -135,4 +170,12 @@ class Jogo (pygame.sprite.Sprite):
 
         pygame.quit()
         sys.exit()
+
+#Inicialização
+jogo= Jogo()
+#Loop Principal
+while True:
+        jogo.new()
+        jogo.run()
+        jogo.show_go_screen()
 
