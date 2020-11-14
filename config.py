@@ -13,6 +13,8 @@ TITLE= 'ONE BIT GAME'
 WIDTH = 700
 HEIGHT = 700
 
+TILESIZE = 32  
+
 # Clock e controle de FPS
 
 clock = pygame.time.Clock()
@@ -29,6 +31,7 @@ WHITE = (255, 255, 255)
 BROWN = (106, 55, 5)
 ORANGE = (255, 140, 0)
 BLUE = (0, 0, 255)
+LIGHTGREY = (100, 100, 100)
 GRAY = (192, 192, 192)
 
 #Configurações gerais navio :
@@ -36,8 +39,13 @@ GRAY = (192, 192, 192)
 BOAT_WIDTH = 120
 BOAT_HEIGHT = 120
 BOAT_SPEED = 280
+BOAT_KICKBACK=-50
 
-    #Lista de Imagens navio:
+#Intervalo entre um tiro e outro:
+
+dt_shot= 300
+
+#Lista de Imagens navio:
 
 BOAT_IMG = 'Navio.png'
 BOAT_WALK_LEFT = ['D0 (3).png']
@@ -46,6 +54,7 @@ BOAT_WALK_UP = ['D0 (1).png']
 BOAT_WALK_DOWN = ['D0 (2).png']
 BOAT_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
-    #Lista de imagem da bola de canhão
+#Configurações balas de canhão
 CANNONBALL_IMG = 'bullet.png'
-
+CANNONBALL_SPEED= 300
+CANNONBALL_PROPG=3
