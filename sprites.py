@@ -1,4 +1,5 @@
 import pygame
+import random
 from config import *
 vetor=pygame.math.Vector2
 
@@ -131,7 +132,6 @@ class Boat(pygame.sprite.Sprite):
     #Atualizando para o jogo
     def update(self):
         self.teclas()
-        self.image=pygame.transform.rotate(self.jogo.boat_img)
         self.rect.center = self.pos
 
 class Cannonball(pygame.sprite.Sprite):
@@ -154,12 +154,23 @@ class Cannonball(pygame.sprite.Sprite):
         propg = uniform(-CANNONBALL_PROPG, CANNONBALL_PROPG)
         self.vel = dir.rotate(propg) * CANNONBALL_SPEED
 
+        #Controlando tempo de aparição:
+        self.tempo_spaw = pg.time.get_ticks()
+
     #Atualizando o trajeto da bala
     def update(self):
         self.rect.center = self.pos
 
-
-
+class Ilhas (pygame.sprite.Sprite):
+        def __init__(self, jogo, x, y):
+        
+            self.groups = jogo.todos_elementos, jogo.Ilhas
+       
+            #Definindo construtor:
+            pygame.sprite.Sprite.__init__(self, self.groups)
+            self.jogo = jogo
+        
+        pass
 
 
    

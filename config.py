@@ -63,6 +63,6 @@ BOAT_WALK_DOWN = ['D0 (2).png']
 BOAT_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
 #Configurações balas de canhão
-CANNONBALL_IMG = 'bullet.png'
+CANNONBALL_IMG = 'cannonball.png'
 CANNONBALL_SPEED= 300
 CANNONBALL_PROPG=3

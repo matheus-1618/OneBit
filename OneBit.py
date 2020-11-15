@@ -1,7 +1,7 @@
 """ 
 ONEBIT THE GAME!
 
-Jogo criado por: Leticia Coêlho Barbosa e Matheus Silva
+Jogo criado por: Leticia Coêlho Barbosa e Matheus Silva Melo de Oliveira
 na disciplina de Design de Software
 
 Professor orientador: Luciano Soares
@@ -16,9 +16,11 @@ Créditos no arquivo README.md
 
 import pygame
 import sys
+from tilemap_codigo import *
 from os import path
 from config import *
 from sprites import *
+
 
 #----- Criando classe Jogo responsável por atualizações e tratamento de eventos
 
@@ -53,7 +55,6 @@ class Jogo (pygame.sprite.Sprite):
         self.map_rect = self.map_img.get_rect()
         
         #Imagens sprites
-        self.boat_img = pygame.image.load(img_folder,BOAT_IMG).convert_alpha()
         self.cannonball_img=pygame.image.load(img_folder,CANNONBALL_IMG).convert_alpha()
 
         #Fontes utilizadas
@@ -103,14 +104,15 @@ class Jogo (pygame.sprite.Sprite):
 
 
     def new(self):
-        #Começando as variáveis fo código
+        #Começando as variáveis do código
         
         self.todos_elementos = pygame.sprite.Group()
         self.cannonballs = pygame.sprite.Group()
-    
+        self.ilhas = pygame.sprite.Group()
+
     def run(self):
-    #Iniciando o mixer de música
-    pygame.mixer.music.play (loops=-1)
+        #Iniciando o mixer de música
+        pygame.mixer.music.play (loops=-1)
 
     # Loop do jogo 
 
@@ -122,10 +124,44 @@ class Jogo (pygame.sprite.Sprite):
             self.update()
             self.draw()
     
-    #FAZER FUNÇÃO "INIT SCREEN"
+
+    #Criando Tela inicial:
+        self.abertura.play(self.sound_effects['abertura'])
+        running = True # Configura o looping
+        
+        while running:
+            
+            self.clock.tick(30)
+            self.information = False # Alterna exibição
+            self.screen.fill(BLACK)
+            
+            # Fundo de tela
+            self.image = self.init_img
+            self.image_rect = self.image.get_rect()
+            self.image_rect.center = (WIDTH/2, self.image_rect.height/2)
+            self.screen.blit(self.image, self.image_rect)
+            
+            # Desenha o texto 
+            self.draw_text("ONE BIT", self.romulus_40, RED, WIDTH/2, HEIGHT/2 -10)
+            self.draw_text("THE GAME", self.romulus_30, RED, WIDTH/2, HEIGHT/2 + 40)
+            self.draw_text("PRESS 'ENTER' TO START", self.romulus_30, LIGHTRED, WIDTH/2, HEIGHT/2 + 80)
+            self.draw_text("LETICIA & MATHEUS PRESENTS", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 - 80)
+            self.draw_text("A DESIGN SOFTWARE's PROJECT", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 - 320)
+            self.draw_text("Pressione 'ESC' para pausar o jogo", self.romulus_20, WHITE, WIDTH/5 +5, HEIGHT - 15)
+            pygame.display.flip()
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    self.quit()
+                
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_RETURN: # Se apertar Enter, entra no Jogo
+                        running = False
+                        self.Fase1 = True
 
     def update(self):
-        #atualiza os elementos gráficos do jogo
+        #Atualiza os elementos gráficos do jogo
         self.todos_elementos.update()
         self.camera.update(self.player)
 
