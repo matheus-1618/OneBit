@@ -1,4 +1,4 @@
-import pygame as pg
+import pygame 
 import pytmx
 from config import *
 
@@ -25,7 +25,7 @@ class TiledMap:
 
     def make_map(self):
         #Criando superfície onde o mapa será desenhado:
-        temp_surface = pg.Surface((self.width, self.height))
+        temp_surface = pygame.Surface((self.width, self.height))
         self.render(temp_surface)
         return temp_surface
 
@@ -35,7 +35,7 @@ class Camera:
     def __init__(self, width, height):
         
         #Fazendo retângulo:
-        self.camera = pg.Rect(0, 0, width, height)
+        self.camera = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
     
@@ -59,4 +59,4 @@ class Camera:
         x = max(-(self.width - WIDTH), x)     # Direita
         y = max(-(self.height - HEIGHT), y)   # Base
         
-        self.camera = pg.Rect(x, y, self.width, self.height)
+        self.camera = pygame.Rect(x, y, self.width, self.height)

@@ -1,5 +1,6 @@
 import pygame
 from os import path
+vec = pygame.math.Vector2
 
 #Definindo Gerais:
 
@@ -49,20 +50,20 @@ BOAT_HEIGHT = 120
 BOAT_SPEED = 280
 BOAT_KICKBACK=-50
 
-#Intervalo entre um tiro e outro:
-
-dt_shot= 300
-
 #Lista de Imagens navio:
 
-BOAT_IMG = 'Navio.png'
-BOAT_WALK_LEFT = ['D0 (3).png']
-BOAT_WALK_RIGHT = ['Navio.png']
-BOAT_WALK_UP = ['D0 (1).png']
-BOAT_WALK_DOWN = ['D0 (2).png']
+BOAT_WALK_LEFT = 'D0 (3).png'
+BOAT_WALK_RIGHT = 'Navio.png'
+BOAT_WALK_UP = 'D0 (1).png'
+BOAT_WALK_DOWN = 'D0 (2).png'
 BOAT_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
 #Configurações balas de canhão
 CANNONBALL_IMG = 'cannonball.png'
-CANNONBALL_SPEED= 300
-CANNONBALL_PROPG=3
+CANNONBALL_SPEED= 500
+CANNONBALL_PROPG=5
+CANNONBALL_LIFETIME = 1000
+
+#Intervalo entre um tiro e outro:
+
+dt_shot= 300

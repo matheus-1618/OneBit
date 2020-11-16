@@ -1,8 +1,7 @@
 import pygame
-import random
+from random import *
 from config import *
-vetor=pygame.math.Vector2
-
+vec = pygame.math.Vector2
 
 # ----- Inicia estruturas de dados (Classes)
 class Boat(pygame.sprite.Sprite):
@@ -24,75 +23,76 @@ class Boat(pygame.sprite.Sprite):
         self.boat_height= BOAT_HEIGHT
         self.rect.center = (x + self.boat_width/2 ,y + self.boat_height/2)
         self.last_update= pygame.time.get_ticks()
-        self.pos = vetor(x,y)
-        self.dir = vetor(1,0)
-        self.vel = vetor(0,0)
+        
+        #Vetor posição
+        self.pos = vec(x,y)
+        #Vetor direção
+        self.dir = vec(x,y)
+        #Vetor velocidade
+        self.vel = vec(0,0)
+
+        #Pegando a ultima direção e tiro
+        self.last_dir = self.dir
+        self.last_shot = 0
 
         #Controle e direção:
     
-        self.LEFT = False
-        self.RIGHT = False
-        self.UP = False
-        self.DOWN = False
+        self.esquerda = ""
+        self.direita = ""
+        self.cima = ""
+        self.baixo = ""
 
         #Movimentações iniciais
     def teclas(self):
-        self.vel = vetor(0,0)
-
-        #Verificando aquelas teclas que foram apertadas:
-        teclas= pygame.key.get_pressed()
-
-        #Movimento para direita
-        if teclas[pygame.K_RIGHT] or teclas[pygame.K_d]:
-            self.vel = vec(BOAT_SPEED, 0)
-            self.dir = vec (1, 0)
-
-            #Atualizando lista de teclas apertadas:
-
-            self.LEFT = False
-            self.RIGHT = True
-            self.UP = False
-            self.DOWN = False           
-
-        #Movimento para esquerda
-        if teclas[pygame.K_LEFT] or teclas[pygame.K_a]:
+        
+        self.rot_speed = 0
+        self.vel = vec(0, 0)
+        keys = pygame.key.get_pressed()
+        
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.vel = vec(-BOAT_SPEED, 0)
             self.dir = vec (-1, 0)
+            self.esquerda = "esquerda"
+            self.direita = ""
+            self.cima = ""
+            self.baixo = ""
             
-            #Atualizando lista de teclas apertadas:
-            
-            self.LEFT = True
-            self.RIGHT = False
-            self.UP = False
-            self.DOWN = False
+
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.vel = vec(BOAT_SPEED, 0)
+            self.dir = vec (1, 0)
+            self.esquerda = ""
+            self.direita = "direita"
+            self.cima = ""
+            self.baixo = ""
+
         
-        #Movimento para cima
-        if teclas[pygame.K_UP] or teclas[pygame.K_w]:
+        elif keys[pygame.K_UP] or keys[pygame.K_w]:
             self.vel = vec(0,-BOAT_SPEED)
             self.dir = vec (0,-1)
+            self.esquerda = ""
+            self.direita = ""
+            self.cima = "cima"
+            self.baixo = ""
 
-            #Atualizando lista de teclas apertadas:
-
-            self.LEFT = False
-            self.RIGHT = False
-            self.UP = True
-            self.DOWN = False            
         
-        #Movimento para baixo
-        if teclas[pygame.K_DOWN] or teclas[pygame.K_s]:
+        elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.vel = vec(0,BOAT_SPEED)
             self.dir = vec (0,1)
+            self.esquerda = ""
+            self.direita = ""
+            self.cima = ""
+            self.baixo= "baixo"
+ 
+        
+        else:
+            self.cima = ""
+            self.baixo = ""
+            self.esquerda = ""
+            self.direita = ""
+        self.last_dir = self.dir # guarda última direção
 
-            #Atualizando lista de teclas apertadas:
-
-            self.LEFT = False
-            self.RIGHT = False
-            self.UP = False
-            self.DOWN = True
-
-        self.last_dir = self.dir #guarda última direção escolhida
-
-        if keys[pg.K_SPACE]:
+        if keys[pygame.K_SPACE]:
             
             now=pygame.time.get_ticks()
             
@@ -102,25 +102,15 @@ class Boat(pygame.sprite.Sprite):
                 self.last_shot = now # se passou tempo mínimo, grava novo 'último tiro'
                 self.charge = 0
                 
-                # Ajusta posição do disparo dependendo da movimentação que o navio estava
-                if self.LEFT:
-                    pos = self.pos + vec(-self.rect.width/2, 0)
-                elif self.RIGHT:
-                    pos = self.pos + vec(self.rect.width, 0)
-                elif self.UP:
-                    pos = self.pos + vec(0, -self.rect.height)
-                elif self.DOWN:
-                    pos = self.pos + vec(0, self.rect.height)
-                else:
-                    # Ajusta posição do bala de canhão quando o navio está parado
-                    if self.last_dir == vec (1, 0):
-                        pos = self.pos + vec(self.rect.width, 0)            
-                    elif self.last_dir == vec (-1, 0):
-                        pos = self.pos + vec(-self.rect.width/2, 0)           
-                    elif self.last_dir == vec (0, -1):
-                        pos = self.pos + vec(0, -self.rect.height)          
-                    else: 
-                        pos = self.pos + vec(0, self.rect.height)        
+                # Ajusta posição do bala de canhão quando o navio está parado
+                if self.last_dir == vec (1, 0):
+                    pos = self.pos + vec(self.rect.width, 0)            
+                elif self.last_dir == vec (-1, 0):
+                    pos = self.pos + vec(-self.rect.width/2, 0)           
+                elif self.last_dir == vec (0, -1):
+                    pos = self.pos + vec(0, -self.rect.height)          
+                else: 
+                    pos = self.pos + vec(0, self.rect.height)        
 
                 dir = self.last_dir                  # "Pegando" última direção
                 Cannonball(self.jogo, pos, dir)
@@ -132,7 +122,33 @@ class Boat(pygame.sprite.Sprite):
     #Atualizando para o jogo
     def update(self):
         self.teclas()
+        self.rect = self.image.get_rect()
         self.rect.center = self.pos
+        self.pos += self.vel * self.jogo.dt
+
+        #Falta configurações de colisão    
+
+        now = pygame.time.get_ticks()
+        delta_t = now - self.last_update
+
+        if self.esquerda == "esquerda":
+            self.image = self.jogo.boat_left['D0 (3).png']
+            self.image = pygame.transform.scale(self.image, (self.boat_width, self.boat_height))
+
+        # Direita
+        elif self.direita == "direita":
+            self.image = self.jogo.boat_right['Navio.png']
+            self.image = pygame.transform.scale(self.image, (self.boat_width, self.boat_height))
+
+        # Baixo
+        elif self.baixo == "baixo":
+            self.image = self.jogo.boat_down['D0 (2).png']
+            self.image = pygame.transform.scale(self.image, (self.boat_width, self.boat_height))
+
+        # Cima
+        elif self.cima == "cima":
+            self.image = self.jogo.boat_up['D0 (1).png']
+            self.image = pygame.transform.scale(self.image, (self.boat_width, self.boat_height))
 
 class Cannonball(pygame.sprite.Sprite):
     #definindo a bola de canhão
@@ -147,19 +163,25 @@ class Cannonball(pygame.sprite.Sprite):
         self.jogo = jogo
         self.image= jogo.cannonball_img
         self.rect= self.image.get_rect()
-        self.pos = vetor(pos)
+        self.pos = vec(pos)
         self.rect.center = pos
 
         #Definindo velocidade:
-        propg = uniform(-CANNONBALL_PROPG, CANNONBALL_PROPG)
+        propg = uniform(-CANNONBALL_PROPG, 0)
         self.vel = dir.rotate(propg) * CANNONBALL_SPEED
 
         #Controlando tempo de aparição:
-        self.tempo_spaw = pg.time.get_ticks()
+        self.tempo_spaw = pygame.time.get_ticks()
 
     #Atualizando o trajeto da bala
     def update(self):
+        self.pos += self.vel * self.jogo.dt
         self.rect.center = self.pos
+
+        #FALTA ACRESCENTAR CONDIÇÃO DE COLISÃO
+        #Condição para que a bala sumir após determindado tempo:
+        if pygame.time.get_ticks() - self.spawn_time > CANNONBALL_LIFETIME: 
+            self.kill()
 
 class Ilhas (pygame.sprite.Sprite):
         def __init__(self, jogo, x, y):
@@ -169,7 +191,8 @@ class Ilhas (pygame.sprite.Sprite):
             #Definindo construtor:
             pygame.sprite.Sprite.__init__(self, self.groups)
             self.jogo = jogo
-        
+
+            #FALTA COMPLEMENTO
         pass
 
 
