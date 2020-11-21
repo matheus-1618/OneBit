@@ -4,7 +4,7 @@ from config import *
 from tilemap_codigo import *
 vec = pygame.math.Vector2
 
-# ----- Inicia estruturas de dados (Classes)
+# ----- Inicia estruturas de dados (Classes) ------#
 class Boat(pygame.sprite.Sprite):
     #Definindo o navio
 
@@ -16,7 +16,7 @@ class Boat(pygame.sprite.Sprite):
 
         pygame.sprite.Sprite.__init__(self, self.groups)
         
-        #Configurações gerais
+        #------Configurações gerais------#
         self.jogo = jogo
         self.image = jogo.boat_img
         self.rect = self.image.get_rect()
@@ -50,7 +50,7 @@ class Boat(pygame.sprite.Sprite):
         self.cima = ""
         self.baixo = ""
 
-        #Movimentações iniciais
+    #------Movimentações iniciais------#
     def teclas(self):
         
         self.rot_speed = 0
@@ -72,8 +72,7 @@ class Boat(pygame.sprite.Sprite):
             self.direita = "direita"
             self.cima = ""
             self.baixo = ""
-
-        
+ 
         elif keys[pygame.K_UP] or keys[pygame.K_w]:
             self.vel = vec(0,-BOAT_SPEED)
             self.dir = vec (0,-1)
@@ -82,7 +81,6 @@ class Boat(pygame.sprite.Sprite):
             self.cima = "cima"
             self.baixo = ""
 
-        
         elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.vel = vec(0,BOAT_SPEED)
             self.dir = vec (0,1)
@@ -91,13 +89,12 @@ class Boat(pygame.sprite.Sprite):
             self.cima = ""
             self.baixo= "baixo"
  
-        
         else:
             self.cima = ""
             self.baixo = ""
             self.esquerda = ""
             self.direita = ""
-        self.last_dir = self.dir # guarda última direção
+        self.last_dir = self.dir                      # guarda última direção
 
         if keys[pygame.K_SPACE]:
             
@@ -107,7 +104,7 @@ class Boat(pygame.sprite.Sprite):
 
             if now - self.last_shot > dt_shot:
                 channel2=self.jogo.sound_effects['cannonball'].play()  
-                self.last_shot = now # se passou tempo mínimo, grava novo 'último tiro'
+                self.last_shot = now                  # se passou tempo mínimo, grava novo 'último tiro'
                 self.charge = 0
                 
                 # Ajusta posição do bala de canhão quando o navio está parado
@@ -120,12 +117,13 @@ class Boat(pygame.sprite.Sprite):
                 else: 
                     pos = self.pos + vec(0, self.rect.height)        
 
-                dir = self.last_dir                  # "Pegando" última direção
+                dir = self.last_dir                   # "Pegando" última direção
                 Cannonball(self.jogo, pos, dir)
-                self.vel = vec(BOAT_KICKBACK, 0)
+                self.vel = vec(BOAT_KICKBACK, 0)      # Pequeno impulso para trás do disparo
+        
         self.last_dir = self.dir
         dir = self.last_dir  
-        # Pequeno impulso para trás do disparo
+        
 
     #Atualizando para o jogo
     def update(self):
@@ -283,7 +281,7 @@ class Obstacle(pygame.sprite.Sprite):
 
 class Pirata_esquerda(pygame.sprite.Sprite):
     def __init__(self,jogo,img,x,y):
-        self.groups = jogo.all_sprites, jogo.pirates
+        self.groups = jogo.all_sprites,jogo.pirates_l1,jogo.pirates_l2 
         pygame.sprite.Sprite.__init__(self,self.groups)
         self.jogo=jogo
         self.image = img
@@ -311,9 +309,13 @@ class Pirata_esquerda(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_ilhas(self, self.jogo.ilhas, 'y')
         self.rect.center = self.hit_rect.center
+        
+        #Respawnando após sair do mapa ou "morrer"
+        if self.pos.x < - 20:
+            self.jogo.respawn('pirate_l') 
         if self.health <= 0:
-            self.kill()
-    
+            self.jogo.respawn('pirate_l')        
+
     def draw_health(self):
         if self.health > 15:
             col = GREEN
@@ -333,7 +335,7 @@ class Pirata_esquerda(pygame.sprite.Sprite):
 
 class Pirata_direita(pygame.sprite.Sprite):
     def __init__(self,jogo,img,x,y):
-        self.groups = jogo.all_sprites, jogo.pirates
+        self.groups = jogo.all_sprites, jogo.pirates_r1,jogo.pirates_r2
         pygame.sprite.Sprite.__init__(self,self.groups)
         self.jogo=jogo
         self.image = img
@@ -361,8 +363,12 @@ class Pirata_direita(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_ilhas(self, self.jogo.ilhas, 'y')
         self.rect.center = self.hit_rect.center
+
+        #Respawnando após sair do mapa ou "morrer"
+        if self.pos.x > self.jogo.map.width:
+            self.jogo.respawn('pirate_r')
         if self.health <= 0:
-            self.kill()
+            self.jogo.respawn('pirate_r')
     
     def draw_health(self):
         if self.health > 15:
@@ -383,7 +389,7 @@ class Pirata_direita(pygame.sprite.Sprite):
 
 class Pirata_cima(pygame.sprite.Sprite):
     def __init__(self,jogo,img,x,y):
-        self.groups = jogo.all_sprites, jogo.pirates
+        self.groups = jogo.all_sprites,jogo.pirates_b1,jogo.pirates_b2 
         pygame.sprite.Sprite.__init__(self,self.groups)
         self.jogo=jogo
         self.image = img
@@ -411,9 +417,13 @@ class Pirata_cima(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_ilhas(self, self.jogo.ilhas, 'y')
         self.rect.center = self.hit_rect.center
+
+        #Respawnando após sair do mapa ou "morrer"
+        if self.pos.y < - 20:
+            self.jogo.respawn('pirate_b')
         if self.health <= 0:
-            self.kill()
-    
+            self.jogo.respawn('pirate_b')
+
     def draw_health(self):
         if self.health > 15:
             col = GREEN
@@ -434,7 +444,7 @@ class Pirata_cima(pygame.sprite.Sprite):
 
 class Pirata_baixo(pygame.sprite.Sprite):
     def __init__(self,jogo,img,x,y):
-        self.groups = jogo.all_sprites, jogo.pirates
+        self.groups = jogo.all_sprites, jogo.pirates_t1, jogo.pirates_t2 
         pygame.sprite.Sprite.__init__(self,self.groups)
         self.jogo = jogo
         self.image = img
@@ -463,8 +473,12 @@ class Pirata_baixo(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_ilhas(self, self.jogo.ilhas, 'y')
         self.rect.center = self.hit_rect.center
+
+        #Respawnando após sair do mapa ou "morrer"
+        if (self.pos.y > 20+ self.jogo.map.height):
+            self.jogo.respawn('pirate_t')
         if self.health <= 0:
-            self.kill()
+            self.jogo.respawn('pirate_t')
     
     def draw_health(self):
         if self.health > 15:
@@ -482,7 +496,8 @@ class Pirata_baixo(pygame.sprite.Sprite):
         #if D>=WIDTH:
             #self.kill()
 
-    #Barra de vida do barco
+#------Barra de vida do barco------#
+
 def draw_boat_health(surf, x, y, pct):
     if pct < 0:
         pct = 0
@@ -500,7 +515,47 @@ def draw_boat_health(surf, x, y, pct):
     pygame.draw.rect(surf, col, fill_rect)
     pygame.draw.rect(surf, WHITE, outline_rect, 2)
 
+# ------------ ITENS ------------#
+class Carne(pygame.sprite.Sprite):
 
-   
-
+    def __init__(self, jogo, x, y):
+        self.groups = jogo.all_sprites, jogo.Meat1, jogo.Meat2, jogo.Meat3, jogo.Meat4
+        
+        # Construtor da classe mãe
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.jogo = jogo  
+        self.image = jogo.carne_img  
+        self.rect = self.image.get_rect()
+        self.pos = vec (x, y)
+        self.rect.center = self.pos
+        
+    def update(self):        
+        
+        now = pygame.time.get_ticks()                  #Pegando tempo
+        delta_respawn = now - self.jogo.last_spawn
     
+        #CONDIÇÃO PARA SPAWN:
+        if delta_respawn >7000:                        #Esperando 7 segundos para respawn
+            self.jogo.respawn('Meat') 
+       
+class Rum (pygame.sprite.Sprite):
+
+    def __init__(self, jogo, x, y):
+        self.groups = jogo.all_sprites, jogo.Rum1, jogo.Rum2, jogo.Rum3, jogo.Rum4
+        
+        # Construtor da classe mãe
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.jogo = jogo
+        self.image = jogo.rum_img  
+        self.rect = self.image.get_rect()
+        self.pos = vec (x, y)
+        self.rect.center = self.pos
+
+    def update(self):        
+              
+        now = pygame.time.get_ticks()                   #Pegando tempo
+        delta_respawn = now - self.jogo.last_spawn
+    
+        #CONDIÇÃO PARA RESPAWN:
+        if delta_respawn >7000:                         #Esperando 7 segundos para respawn
+            self.jogo.respawn('Rum') 

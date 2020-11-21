@@ -2,7 +2,7 @@ import pygame
 from os import path
 vec = pygame.math.Vector2
 
-#Definindo Gerais:
+#------Definindo Gerais-----#
 
 #Diretórios acessados
 GAME_DIR = path.dirname(__file__)
@@ -20,13 +20,13 @@ HEIGHT = 768
 
 TILESIZE = 64 
 
-# Clock e controle de FPS
+#Clock e controle de FPS
 
 clock = pygame.time.Clock()
 FPS = 60
 dt = clock.tick(FPS)/1000
 
-# Cores utilizadas
+#Cores utilizadas
 
 WHITE = (255, 255, 255)
 DARKGREY = (40, 40, 40)
@@ -43,6 +43,12 @@ ORANGE = (255, 140, 0)
 BLUE = (0, 0, 255)
 GRAY = (192, 192, 192)
 
+#Configuração itens
+RUM_SPREAD=15
+CARNE_LIFE=5
+
+RUM_IMG='bottle.png'
+MEAT_IMG='Carne.png'
 
 #Configurações gerais navio :
 
@@ -59,7 +65,6 @@ BOAT_WALK_RIGHT = 'Navio.png'
 BOAT_WALK_UP = 'D0 (1).png'
 BOAT_WALK_DOWN = 'D0 (2).png'
 BOAT_HIT_RECT = pygame.Rect(0, 0, 35, 35)
-BOAT_HIT_RECT = pygame.Rect(0, 0, 35, 35)
 
 #Configurações balas de canhão
 CANNONBALL_IMG = 'bullet.png'
@@ -73,6 +78,7 @@ CANNONBALL_DAMAGE = 10
 #Intervalo entre um tiro e outro:
 
 dt_shot= 300
+
 #Configurações inimigas
 CRACKEN_IMG = 'enemie.png'
 CRACKEN_SPEEDS = [150, 100, 75, 125]
@@ -81,6 +87,8 @@ CRACKEN_HEALTH = 100
 CRACKEN_DAMAGE = 10
 CRACKEN_KNOCKBACK = 20
 AVOID_RADIUS = 50
+
+MOB_KNOCKBACK= 20   #Recuo
 
 #Configurações inimigas pirata
 PIRATA_DIREITA= 'pirata_direita.png'
