@@ -41,8 +41,15 @@ class Jogo:
         self.clock = pygame.time.Clock()
         self.load_data()
 
+        self.xp_total=0      #Xp acumulado total 
+
+        self.propg= CANNONBALL_PROPG  #Direcionamento dos tiros
+
+        self.last_respawn=0   #tempo para respawn        
+
         self.last_spawn=0     #Variavel para tempo de spawn       
 
+        self.GAMEOVER = False  #Variavel para iniciar a tela de Gameover
     def load_data(self):
         
         #------Caminhos para a busca de arquivo------#
@@ -57,6 +64,9 @@ class Jogo:
         
         #------Imagens inicias------#
         self.init_img = pygame.image.load(path.join(IMG_DIR, 'deixando.gif')).convert()
+
+        #------Imagens da tela final------#
+        self.game_over_img=pygame.image.load(path.join(IMG_DIR,'game_over.JPG'))
 
         #------Fontes utilizadas------#
         self.ken_pixel = path.join(FONT_DIR, 'kenpixel_blocks.TTF')
@@ -73,14 +83,21 @@ class Jogo:
         #Inicializando músicas de fundo-da abertura
         self.abertura = pygame.mixer.Channel(5)
         self.abertura.set_volume(0.3)
-        abertura = pygame.mixer.music.load(path.join(MUSIC_DIR, 'ONE_PIECE.ogg'))
+        self.game_over = pygame.mixer.Channel(2)
+        self.game_over.set_volume(0.3)
         pygame.mixer.music.load(path.join(MUSIC_DIR, 'pirates.ogg'))
         pygame.mixer.music.set_volume(0.5)
         #Dicionário com os efeitos sonoros utilziados
         self.sound_effects = {}
         self.sound_effects['abertura'] = pygame.mixer.Sound(path.join(MUSIC_DIR, 'ONE_PIECE.ogg'))
+        self.sound_effects['game over'] = pygame.mixer.Sound(path.join(MUSIC_DIR, 'final.mp3'))
         self.sound_effects['cannonball'] = pygame.mixer.Sound(path.join(EFFECTS_DIR, 'tiro_canhão.mp3'))
-
+        self.sound_effects['canhao']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'canhao.mp3' ))
+        self.sound_effects['cracken']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'cracken.WAV' ))
+        self.sound_effects['pirata1']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'pirate1.mp3' ))
+        self.sound_effects['pirata2']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'pirate2.mp3' ))
+        self.sound_effects['pirata3']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'pirate3.mp3' ))
+        self.sound_effects['pirata4']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'pirate4.mp3' ))
         #------Importando Imagens utilizadas------#
 
         self.boat_img = pygame.image.load(path.join(img_folder, BOAT_IMG)).convert_alpha()
@@ -90,7 +107,7 @@ class Jogo:
         #Carregando imagens de itens:
         self.carne_img=pygame.image.load(path.join(IMG_DIR,MEAT_IMG)).convert_alpha()
         self.rum_img=pygame.image.load(path.join(IMG_DIR,RUM_IMG)).convert_alpha()
-
+        self.tesouro_img=pygame.image.load(path.join(IMG_DIR,TESOURO_IMG)).convert_alpha()
         #------Importando movimentação dos personagens------#
 
         #------Navio------#
@@ -151,6 +168,12 @@ class Jogo:
         self.pirates_b1=pygame.sprite.Group()
         self.pirates_b2=pygame.sprite.Group()
 
+        #criando sprites dos morteiros
+        self.cannon1=pygame.sprite.Group()
+        self.cannon2=pygame.sprite.Group()
+        self.cannon3=pygame.sprite.Group()
+        self.cannon4=pygame.sprite.Group()
+
         #Criando sprites de itens:
         self.Meat1= pygame.sprite.Group()
         self.Meat2= pygame.sprite.Group()
@@ -160,6 +183,10 @@ class Jogo:
         self.Rum2= pygame.sprite.Group()
         self.Rum3= pygame.sprite.Group()
         self.Rum4= pygame.sprite.Group()
+        self.tesouro1= pygame.sprite.Group()
+        self.tesouro2= pygame.sprite.Group()
+        self.tesouro3= pygame.sprite.Group()
+        self.tesouro4= pygame.sprite.Group()
 
         #------Criando objetos no mapa------#
 
@@ -173,6 +200,10 @@ class Jogo:
                 Cracken(self, tile_object.x, tile_object.y)
             #Gera os limites da ilha
             if tile_object.name == 'Ilha': 
+                Obstacle(self, tile_object.x, tile_object.y,
+                         tile_object.width, tile_object.height)
+            #Gera os obstáculos
+            if tile_object.name == 'objetos': 
                 Obstacle(self, tile_object.x, tile_object.y,
                          tile_object.width, tile_object.height)
             
@@ -216,12 +247,84 @@ class Jogo:
                 Rum(self,tile_object.x, tile_object.y)
             if tile_object.name in 'Rum4':
                 Rum(self,tile_object.x, tile_object.y)
+
+            #Spawnando item Tesouro:
+            if tile_object.name == 'Tesouro1':
+                Tesouro(self,tile_object.x,tile_object.y)
+            if tile_object.name == 'Tesouro2':
+                Tesouro(self,tile_object.x,tile_object.y)
+            if tile_object.name == 'Tesouro3':
+                Tesouro(self,tile_object.x,tile_object.y)
+            if tile_object.name == 'Tesouro4':
+                Tesouro(self,tile_object.x,tile_object.y)
             
+            #Spawnando a primeira bala de canhão
+            if tile_object.name== 'cannon3':
+                Cannonball2(self,vec(tile_object.x, tile_object.y),vec(-1,0))
         #------Camera------#
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False        
 
     def respawn(self,type): 
+        #Spawnando tesouros pelo mapa
+        if type == 'Tesouro':
+            aleatorio=choice([1,2,3,4])                           #Sorteando posição de respawn
+            if aleatorio==1:
+                for sprite in self.tesouro1.sprites(): 
+                    sprite.kill()
+                    self.last_spawn = pygame.time.get_ticks()     #Pegando tempo de spawn
+                for tile_object in self.map.tmxdata.objects:
+                    if tile_object.name == 'Tesouro1':               #Posição 1
+                        Tesouro(self,tile_object.x, tile_object.y)
+            if aleatorio==2:
+                for sprite in self.tesouro2.sprites(): 
+                    sprite.kill()
+                    self.last_spawn = pygame.time.get_ticks()      #Pegando tempo de spawn
+                for tile_object in self.map.tmxdata.objects:
+                    if tile_object.name == 'Tesouro2':                #Posição 2
+                        Tesouro(self,tile_object.x, tile_object.y)
+            if aleatorio==3:
+                for sprite in self.tesouro3.sprites(): 
+                    sprite.kill()
+                    self.last_spawn = pygame.time.get_ticks()      #Pegando tempo de spawn
+                for tile_object in self.map.tmxdata.objects:
+                    if tile_object.name == 'Tesouro3':                #Posição 3
+                        Tesouro(self,tile_object.x, tile_object.y) 
+            if aleatorio==4:
+                for sprite in self.tesouro4.sprites(): 
+                    sprite.kill()
+                    self.last_spawn = pygame.time.get_ticks()       #Pegando tempo de spawn
+                for tile_object in self.map.tmxdata.objects:        
+                    if tile_object.name == 'Tesouro4':                 #Posição 4
+                        Tesouro(self,tile_object.x, tile_object.y)
+        #Spawnando canhões nas ilhas
+        if type=='cannons':
+            channel2=self.sound_effects['canhao'].play() 
+            sorteando=choice([1,2,3,4])
+            if sorteando ==1:
+                for sprite in self.cannon1.sprites():
+                    self.last_respawn=pygame.time.get_ticks()
+                for tile_object in self.map.tmxdata.objects:
+                    if tile_object.name== 'cannon1':
+                        Cannonball2(self,vec(tile_object.x, tile_object.y),vec(0,-1))
+            if sorteando==2:
+                for sprite in self.cannon1.sprites():
+                    self.last_respawn=pygame.time.get_ticks()
+                for tile_object in self.map.tmxdata.objects:
+                    if tile_object.name== 'cannon2':
+                        Cannonball2(self,vec(tile_object.x, tile_object.y),vec(1,0))
+            if sorteando==3:
+                for sprite in self.cannon1.sprites():
+                        self.last_respawn=pygame.time.get_ticks()
+                for tile_object in self.map.tmxdata.objects:
+                    if tile_object.name== 'cannon3':
+                        Cannonball2(self,vec(tile_object.x, tile_object.y),vec(-1,0))
+            else:
+                for sprite in self.cannon1.sprites():
+                    self.last_respawn=pygame.time.get_ticks()
+                for tile_object in self.map.tmxdata.objects:
+                    if tile_object.name== 'cannon4':
+                        Cannonball2(self,vec(tile_object.x, tile_object.y),vec(0,1))
         
         #Respawn piratas esquerda:
         if type == 'pirate_l':
@@ -390,7 +493,7 @@ class Jogo:
             self.draw_text("ONE BIT", self.kenpixel_80, RED, WIDTH/2, HEIGHT/2 -20)
             self.draw_text("THE GAME", self.kenpixel_40, RED, WIDTH/2, HEIGHT/2 + 40)
             self.draw_text("PRESS 'ENTER' TO START", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 + 120)
-            self.draw_text("LETICIA & MATHEUS PRESENTS", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 - 100)
+            self.draw_text("LETICIA & MATHEUS PRESENTS", self.romulus_30, WHITE, WIDTH/2, HEIGHT/2 - 100)
             self.draw_text("A DESIGN SOFTWARE's PROJECT", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 - 320)
             self.draw_text("Pressione 'ESC' para pausar o jogo", self.romulus_20, WHITE, WIDTH/5 +5, HEIGHT - 15)
             pygame.display.flip()
@@ -406,6 +509,35 @@ class Jogo:
                         self.Fase1 = True
 
         self.abertura.stop()
+     #------Criando Tela de game_over------#
+    def game_over_screen(self): # Exibe a tel a inicial do jogo
+        self.game_over.play(self.sound_effects['game over'])
+        running = True # Configura o looping
+        while running:
+            #self.normal.play(self.sound_effects['normal'])
+            self.clock.tick(30)
+            self.screen.fill(BLACK)
+            # Fundo de tela
+            self.image = self.game_over_img
+            self.image_rect = self.image.get_rect()
+            self.image_rect.center = (WIDTH/2, self.image_rect.height/2)
+            self.screen.blit(self.image, self.image_rect)
+            # Desenha o texto 
+            self.draw_text("GAME OVER", self.kenpixel_80, RED, WIDTH/2, HEIGHT/2 -20)
+            self.draw_text("PRESS 'ENTER' TO START AGAIN", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 + 120)
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    self.quit()
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_RETURN: # Se apertar Enter, entra no Jogo
+                        running = False
+                        self.GAMEOVER= False
+                        self.playing=True
+                        self.Fase1 = True
+                        jogo.__init__()
+        self.game_over.stop()
 
     def update(self):
         
@@ -415,13 +547,26 @@ class Jogo:
         
         #Acrescentar condição tempo para mudança de fase
         
+        #------Bala de canhão atinge jogador------#
+        lista_canhões=[self.cannon1,self.cannon2,self.cannon3,self.cannon4]
+        for m in lista_canhões:
+            hits = pygame.sprite.spritecollide(self.boat, m, True, collide_hit_rect)
+            for hit in hits:
+                self.boat.health -= CANNONBALL_DAMAGE2
+                self.boat.speed-=CANNONBALL_LESS_SPEED
+                hit.vel = vec(0, 0)
+
         #------Cracken atinge jogador------#
         hits = pygame.sprite.spritecollide(self.boat, self.crackens, False, collide_hit_rect)
         for hit in hits:
+            channel2=self.sound_effects['cracken'].play() 
             self.boat.health -= CRACKEN_DAMAGE
             hit.vel = vec(0, 0)
             if self.boat.health <= 0:
+                self.GAMEOVER = True
                 self.playing = False
+            if self.GAMEOVER== True:
+                pygame.mixer.music.stop() 
         if hits:
             self.boat.pos += vec(CRACKEN_KNOCKBACK, 0).rotate(-hits[0].rot)
         
@@ -450,14 +595,14 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(-MOB_KNOCKBACK/3, 0)
+                self.boat.pos += vec(-MOB_KNOCKBACK, 0)
 
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_l2, False, collide_hit_rect)    #Colisão barco pirata
         for hit in hits:                                                                           #Verificando se houve colisão                 
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(-MOB_KNOCKBACK/3, 0)
+                self.boat.pos += vec(-MOB_KNOCKBACK, 0)
 
         #Piratas Direita:
 
@@ -466,14 +611,14 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(MOB_KNOCKBACK/3, 0)
+                self.boat.pos += vec(MOB_KNOCKBACK, 0)
         
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_r2, False, collide_hit_rect)    #Colisão barco pirata
         for hit in hits:                                                                           #Verificando se houve colisão                                 
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(MOB_KNOCKBACK/3, 0)        
+                self.boat.pos += vec(MOB_KNOCKBACK, 0)      
 
         #Piratas Cima:
 
@@ -482,14 +627,14 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(0,-MOB_KNOCKBACK/3)
+                self.boat.pos += vec(0,-MOB_KNOCKBACK)
         
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_b2, False, collide_hit_rect)   #Colisão barco pirata
         for hit in hits:                                                                          #Verificando se houve colisão           
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(0,-MOB_KNOCKBACK/3)        
+                self.boat.pos += vec(0,-MOB_KNOCKBACK)       
 
         #Piratas Baixo:
 
@@ -498,26 +643,39 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(0,MOB_KNOCKBACK/3)
+                self.boat.pos += vec(0,MOB_KNOCKBACK)
         
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_t2, False, collide_hit_rect)   #Colisão barco pirata
         for hit in hits:                                                                          #Verificando se houve colisão          
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
-                self.boat.pos += vec(0,MOB_KNOCKBACK/3)        
+                self.boat.pos += vec(0,MOB_KNOCKBACK)        
 
         #------Player colide com Itens------#
         
-        #Criando lista para armazenar carne
+        lista_tesouro=[self.tesouro1, self.tesouro2, self.tesouro3, self.tesouro4]
 
+        for i in lista_tesouro:
+            hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
+            for hit in hits:
+                channel2=self.sound_effects['pirata2'].play()
+                #self.current_xp += BOAT_XP  
+                self.xp_total+=TESOURO_XP                    
+                hit.kill()
+                self.respawn('Tesouro')
+
+        #Criando lista para armazenar carne
+        
         lista_carne=[self.Meat1, self.Meat2, self.Meat3, self.Meat4]
 
         for i in lista_carne:
-            
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
-                #self.current_xp += BOAT_XP                       
+                channel2=self.sound_effects['pirata4'].play()
+                #self.current_xp += BOAT_XP  
+                self.boat.health+= CARNE_LIFE
+                self.xp_total+=CARNE_XP                    
                 hit.kill()
                 self.respawn('Meat')
 
@@ -530,9 +688,10 @@ class Jogo:
         lista_rum=[self.Rum1, self.Rum2, self.Rum3, self.Rum4]
 
         for i in lista_rum:
-            
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
+                channel2=self.sound_effects['pirata3'].play()
+                self.propg+=5
                 #self.current_xp += BOAT_XP                       
                 hit.kill()
                 self.respawn('Rum')
@@ -578,7 +737,8 @@ class Jogo:
         if self.draw_debug:
             for wall in self.ilhas:
                 pygame.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
-        draw_boat_health(self.screen, 10, 10, self.boat.health / BOAT_HEALTH)
+        draw_boat_health(self.screen, 10, 30, self.boat.health / BOAT_HEALTH)
+        draw_boat_xp(self.screen,10 ,50,self.xp_total/BOAT_XP_MAX)
         pygame.display.flip()
 
 
@@ -617,11 +777,9 @@ jogo= Jogo()
 #------Loop Principal-----#
 
 while True:
-    
     jogo.init_screen()
-    
-    while True:
-        jogo.new()
-        jogo.run()
+    jogo.new()
+    jogo.run()
+    jogo.game_over_screen()
         
 
