@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="2020.10.30" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="157">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="157">
  <tileset firstgid="1" source="Mar.tsx"/>
  <tileset firstgid="630" source="Vila1.tsx"/>
  <tileset firstgid="886" source="Vila_terreno1.tsx"/>
@@ -226,10 +226,10 @@
 </data>
  </layer>
  <objectgroup id="6" name="ilhas_obs">
-  <object id="4" name="Ilha" x="30.6667" y="4" width="786.667" height="234"/>
-  <object id="5" name="Ilha" x="519.333" y="804.667" width="172" height="365.333"/>
-  <object id="9" name="Ilha" x="692" y="803.334" width="60.6667" height="260"/>
-  <object id="10" name="Ilha" x="-0.66667" y="1243.34" width="402.667" height="358.667"/>
+  <object id="4" name="Ilha" x="46.6667" y="-12" width="786.667" height="234"/>
+  <object id="5" name="Ilha" x="526" y="794" width="172" height="365.333"/>
+  <object id="9" name="Ilha" x="701.333" y="798.001" width="60.6667" height="260"/>
+  <object id="10" name="Ilha" x="3.33333" y="1244.67" width="402.667" height="358.667"/>
   <object id="147" name="Ilha" x="1089" y="132" width="27" height="26"/>
   <object id="148" name="Ilha" x="1315" y="611" width="26" height="27"/>
   <object id="149" name="Ilha" x="898" y="835" width="26" height="25"/>
@@ -238,35 +238,35 @@
   <object id="152" name="Ilha" x="99" y="415" width="30" height="31"/>
  </objectgroup>
  <objectgroup id="7" name="Canhaoesquerda">
-  <object id="112" name="cannon3" x="549" y="838" width="22" height="24"/>
-  <object id="113" name="cannon3" x="547" y="899" width="22" height="24"/>
-  <object id="114" name="cannon3" x="546" y="963" width="22" height="24"/>
-  <object id="115" name="cannon3" x="544" y="1028" width="22" height="24"/>
+  <object id="112" name="cannon3" x="498.333" y="835.333" width="22" height="24"/>
+  <object id="113" name="cannon3" x="488.333" y="896.333" width="22" height="24"/>
+  <object id="114" name="cannon3" x="495.333" y="963" width="22" height="24"/>
+  <object id="115" name="cannon3" x="492" y="1025.33" width="22" height="24"/>
  </objectgroup>
  <objectgroup id="8" name="Canhaodireita">
-  <object id="116" name="cannon2" x="718" y="911"/>
-  <object id="117" name="cannon2" x="719" y="977"/>
-  <object id="118" name="cannon2" x="366" y="1521"/>
-  <object id="119" name="cannon2" x="367" y="1458"/>
-  <object id="122" name="cannon2" x="367" y="1331"/>
-  <object id="123" name="cannon2" x="367" y="1393"/>
+  <object id="116" name="cannon2" x="780.667" y="912.333"/>
+  <object id="117" name="cannon2" x="777.667" y="975.667"/>
+  <object id="118" name="cannon2" x="427.333" y="1521"/>
+  <object id="119" name="cannon2" x="424.333" y="1456.67"/>
+  <object id="122" name="cannon2" x="421.667" y="1331"/>
+  <object id="123" name="cannon2" x="425.667" y="1393"/>
  </objectgroup>
  <objectgroup id="9" name="Canhaobaixo">
-  <object id="138" name="cannon4" x="108" y="176"/>
-  <object id="139" name="cannon4" x="206" y="178"/>
-  <object id="140" name="cannon4" x="271" y="176"/>
-  <object id="141" name="cannon4" x="334" y="177"/>
-  <object id="142" name="cannon4" x="431" y="177"/>
-  <object id="143" name="cannon4" x="497" y="177"/>
-  <object id="144" name="cannon4" x="560" y="176"/>
-  <object id="145" name="cannon4" x="655" y="176"/>
-  <object id="146" name="cannon4" x="716" y="178"/>
+  <object id="138" name="cannon4" x="108" y="250.667"/>
+  <object id="139" name="cannon4" x="206" y="252.667"/>
+  <object id="140" name="cannon4" x="271" y="250.667"/>
+  <object id="141" name="cannon4" x="334" y="251.667"/>
+  <object id="142" name="cannon4" x="431" y="251.667"/>
+  <object id="143" name="cannon4" x="497" y="251.667"/>
+  <object id="144" name="cannon4" x="560" y="250.667"/>
+  <object id="145" name="cannon4" x="655" y="250.667"/>
+  <object id="146" name="cannon4" x="716" y="252.667"/>
  </objectgroup>
  <objectgroup id="10" name="Canhaocima">
-  <object id="124" name="cannon1" x="74" y="1265"/>
-  <object id="125" name="cannon1" x="137" y="1261"/>
-  <object id="127" name="cannon1" x="197" y="1255" width="20" height="20"/>
-  <object id="128" name="cannon1" x="260" y="1254" width="20" height="20"/>
+  <object id="124" name="cannon1" x="75.3333" y="1225"/>
+  <object id="125" name="cannon1" x="138.333" y="1230.33"/>
+  <object id="127" name="cannon1" x="193" y="1220.33" width="20" height="20"/>
+  <object id="128" name="cannon1" x="261.333" y="1222" width="20" height="20"/>
  </objectgroup>
  <objectgroup id="12" name="pirate">
   <object id="54" name="pirate_t1" x="929" y="-122" width="98" height="99"/>

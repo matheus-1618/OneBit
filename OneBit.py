@@ -55,10 +55,10 @@ class Jogo:
         #------Caminhos para a busca de arquivo------#
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder,'img')
-        map_folder = path.join(game_folder,'map2')
+        map_folder = path.join(game_folder,'map2N')
         
         #------Importando mapa------#
-        self.map = TiledMap(path.join(map_folder, 'mapa_matheus.tmx'))
+        self.map = TiledMap(path.join(map_folder, 'map2N.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         
@@ -666,7 +666,7 @@ class Jogo:
                 self.respawn('Tesouro')
 
         #Criando lista para armazenar carne
-        
+
         lista_carne=[self.Meat1, self.Meat2, self.Meat3, self.Meat4]
 
         for i in lista_carne:

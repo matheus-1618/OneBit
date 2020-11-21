@@ -280,8 +280,8 @@ class Cannonball2(pygame.sprite.Sprite):
         delta_t=now - self.jogo.last_respawn
         self.pos += self.vel * self.jogo.dt
         self.rect.center = self.pos
-        if pygame.sprite.spritecollideany(self, self.jogo.ilhas):
-            self.kill()
+        #if pygame.sprite.spritecollideany(self, self.jogo.ilhas):
+            #self.kill()
         if delta_t> 3000:
             self.jogo.respawn('cannons')
 
