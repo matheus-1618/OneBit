@@ -11,7 +11,7 @@ FONT_DIR = path.join(GAME_DIR, 'assets', 'fontes')
 MUSIC_DIR = path.join(GAME_DIR, 'assets', 'sounds', 'musica')
 EFFECTS_DIR = path.join(GAME_DIR,'assets','sounds','effects')
 
-TITLE= 'ONE BIT GAME'
+TITLE= "ONE BIT GAME"
 
 #Configurando tamanho da tela:
 

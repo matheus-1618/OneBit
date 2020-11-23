@@ -39,7 +39,19 @@ class Jogo:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
+        
+        #------Inicializando Fases e transições------#
+        self.playing = True # utilizada para controlar o looping 'run'
+        self.paused = False 
+        self.GAMEOVER = False
+        self.Fase1 = True
+        self.Fase2 = False
+        self.init_load = False
+        self.count_fase = 0 
+        
+        #------Inicializando carregamento------#
         self.load_data()
+
 
         self.xp_total=0      #Xp acumulado total 
 
@@ -55,12 +67,19 @@ class Jogo:
         #------Caminhos para a busca de arquivo------#
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder,'img')
-        map_folder = path.join(game_folder,'map2N')
+        map_folder1 = path.join(game_folder,'map1')
+        map_folder2 = path.join(game_folder,'map2N')
         
         #------Importando mapa------#
-        self.map = TiledMap(path.join(map_folder, 'map2N.tmx'))
-        self.map_img = self.map.make_map()
-        self.map_rect = self.map_img.get_rect()
+        if self.Fase1==True:
+            self.map = TiledMap(path.join(map_folder1, 'map1.tmx'))
+            self.map_img = self.map.make_map()
+            self.map_rect = self.map_img.get_rect()
+        
+        elif self.Fase2==True:
+            self.map = TiledMap(path.join(map_folder2, 'map2N.tmx'))
+            self.map_img = self.map.make_map()
+            self.map_rect = self.map_img.get_rect()
         
         #------Imagens inicias------#
         self.init_img = pygame.image.load(path.join(IMG_DIR, 'deixando.gif')).convert()
@@ -150,7 +169,11 @@ class Jogo:
     def new(self):
         
         #Futuramente chamar last_spawn para mudança de fase
-
+        while self.init_load: # carrega o Load novamente, cada vez q mudar de fase
+            self.load_data()
+            self.init_load = False
+            self.last_respawn=  pygame.time.get_ticks()
+            self.last_spawn = pygame.time.get_ticks()
         #------Criando sprites------# 
         
         self.all_sprites = pygame.sprite.Group()            #Grupo geral
@@ -461,13 +484,11 @@ class Jogo:
         pygame.mixer.music.play (loops=-1)
 
     #------Loop do jogo------#
-
         self.playing = True
-        
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000.0                   # fix for Python 2.x
             self.events()
-            self.update()
+            self.update()    
             self.draw()
     
 
@@ -511,39 +532,47 @@ class Jogo:
         self.abertura.stop()
      #------Criando Tela de game_over------#
     def game_over_screen(self): # Exibe a tel a inicial do jogo
-        self.game_over.play(self.sound_effects['game over'])
-        running = True # Configura o looping
-        while running:
-            #self.normal.play(self.sound_effects['normal'])
-            self.clock.tick(30)
-            self.screen.fill(BLACK)
-            # Fundo de tela
-            self.image = self.game_over_img
-            self.image_rect = self.image.get_rect()
-            self.image_rect.center = (WIDTH/2, self.image_rect.height/2)
-            self.screen.blit(self.image, self.image_rect)
-            # Desenha o texto 
-            self.draw_text("GAME OVER", self.kenpixel_80, RED, WIDTH/2, HEIGHT/2 -20)
-            self.draw_text("PRESS 'ENTER' TO START AGAIN", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 + 120)
-            pygame.display.flip()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    self.quit()
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RETURN: # Se apertar Enter, entra no Jogo
+        if self.GAMEOVER:
+            self.game_over.play(self.sound_effects['game over'])
+            running = True # Configura o looping
+            while running:
+                #self.normal.play(self.sound_effects['normal'])
+                self.clock.tick(30)
+                self.screen.fill(BLACK)
+                # Fundo de tela
+                self.image = self.game_over_img
+                self.image_rect = self.image.get_rect()
+                self.image_rect.center = (WIDTH/2, self.image_rect.height/2)
+                self.screen.blit(self.image, self.image_rect)
+                # Desenha o texto 
+                self.draw_text("GAME OVER", self.kenpixel_80, RED, WIDTH/2, HEIGHT/2 -20)
+                self.draw_text("PRESS 'ENTER' TO START AGAIN", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 + 120)
+                pygame.display.flip()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
                         running = False
-                        self.GAMEOVER= False
-                        self.playing=True
-                        self.Fase1 = True
-                        jogo.__init__()
-        self.game_over.stop()
+                        self.quit()
+                    if event.type == pygame.KEYUP:
+                        if event.key == pygame.K_RETURN: # Se apertar Enter, entra no Jogo
+                            running = False
+                            self.init_screen()
+                            self.GAMEOVER= False
+                            self.playing=True
+                            self.Fase1 = True
+                            self.Fase2=False
+                            jogo.__init__()
+            self.game_over.stop()
 
     def update(self):
-        
+
         #Atualiza os elementos gráficos do jogo
         self.all_sprites.update()
         self.camera.update(self.boat)
+
+        #Se o jogador morre
+        if self.boat.health <= 0:
+            self.playing = False 
+            self.GAMEOVER = True
         
         #Acrescentar condição tempo para mudança de fase
         
@@ -595,6 +624,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(-MOB_KNOCKBACK, 0)
 
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_l2, False, collide_hit_rect)    #Colisão barco pirata
@@ -602,6 +632,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(-MOB_KNOCKBACK, 0)
 
         #Piratas Direita:
@@ -611,6 +642,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(MOB_KNOCKBACK, 0)
         
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_r2, False, collide_hit_rect)    #Colisão barco pirata
@@ -618,6 +650,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(MOB_KNOCKBACK, 0)      
 
         #Piratas Cima:
@@ -627,6 +660,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(0,-MOB_KNOCKBACK)
         
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_b2, False, collide_hit_rect)   #Colisão barco pirata
@@ -634,6 +668,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(0,-MOB_KNOCKBACK)       
 
         #Piratas Baixo:
@@ -643,6 +678,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(0,MOB_KNOCKBACK)
         
         hits = pygame.sprite.spritecollide(self.boat, self.pirates_t2, False, collide_hit_rect)   #Colisão barco pirata
@@ -650,6 +686,7 @@ class Jogo:
             self.boat.health -= PIRATA_DAMAGE
             hit.vel = vec(0, 0)
             if hits:
+                hit.health -= CANNONBALL_DAMAGE/5
                 self.boat.pos += vec(0,MOB_KNOCKBACK)        
 
         #------Player colide com Itens------#
@@ -679,14 +716,8 @@ class Jogo:
                 hit.kill()
                 self.respawn('Meat')
 
-                # aumenta stamina e score
-                #self.stamine += BOAT_STAMINA
-                #self.score += BOAT_SCORE
-                
         #Criando lista para armazenar bebida
-
         lista_rum=[self.Rum1, self.Rum2, self.Rum3, self.Rum4]
-
         for i in lista_rum:
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
@@ -699,7 +730,29 @@ class Jogo:
                 # aumenta stamina e score
                 #self.stamine += BOAT_STAMINA
                 #self.score += BOAT_SCORE
-                
+
+    def next_phase(self):
+        if self.count_fase == 0: # se estava na fase inicial
+            self.Fase1 = False
+            self.playing = False
+            self.Fase2 = True
+            self.init_load = True
+            self.xp_total=0
+            self.boat.health=BOAT_HEALTH
+            self.boat.speed= BOAT_SPEED
+            self.propg= CANNONBALL_PROPG
+            self.count_fase = 1 # Muda o contador para 1 (próximo mapa)
+            
+        elif self.count_fase == 1: # se estava na última fase
+            self.Fase2 = False
+            self.playing = False
+            self.Fase1 = True
+            self.xp_total=0
+            self.count_fase = 0 # deixa ajustado para a fase inicial
+            self.init_load = False
+            self.GAMEOVER = False
+            self.WINNER = True
+            
     def draw_grid(self):
         #Desenhando linhas (grid) na tela
 
@@ -778,8 +831,14 @@ jogo= Jogo()
 
 while True:
     jogo.init_screen()
-    jogo.new()
-    jogo.run()
-    jogo.game_over_screen()
+    while jogo.Fase1:
+        jogo.new()
+        jogo.run()
+        jogo.game_over_screen()
+    
+    while jogo.Fase2:
+        jogo.new()
+        jogo.run()
+        jogo.game_over_screen()
         
 

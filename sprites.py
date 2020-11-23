@@ -142,11 +142,10 @@ class Boat(pygame.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_ilhas(self, self.jogo.ilhas, 'y')
         self.rect.center = self.hit_rect.center
+        if self.jogo.xp_total/BOAT_XP_MAX >=1:
+            self.jogo.next_phase()
         if self.health<=0:
             self.kill()
-   
-
-        now = pygame.time.get_ticks()
 
         if self.esquerda == "esquerda":
             self.image = self.jogo.boat_left['D0 (3).png']
@@ -349,9 +348,9 @@ class Pirata_esquerda(pygame.sprite.Sprite):
             self.jogo.respawn('pirate_l')        
 
     def draw_health(self):
-        if self.health > 15:
+        if self.health >= 10:
             col = GREEN
-        elif self.health > 10:
+        elif self.health == 0:
             col = YELLOW
         else:
             col = RED
@@ -535,6 +534,7 @@ def draw_boat_xp(surf, x, y, pct):
     BAR_HEIGHT = 20
     if pct>=1:
         pct=1
+
     fill = pct * BAR_LENGTH
     outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
     fill_rect = pygame.Rect(x, y, fill, BAR_HEIGHT)
