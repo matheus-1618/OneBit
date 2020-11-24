@@ -143,7 +143,7 @@ class Boat(pygame.sprite.Sprite):
         collide_with_ilhas(self, self.jogo.ilhas, 'y')
         self.rect.center = self.hit_rect.center
         if self.jogo.xp_total/BOAT_XP_MAX >=1:
-            self.jogo.next_phase()
+            self.jogo.proxima_fase()
         if self.health<=0:
             self.kill()
 

@@ -325,8 +325,8 @@
  </objectgroup>
  <objectgroup id="13" name="Mob">
   <object id="116" name="boat" x="41" y="780" width="95" height="100"/>
-  <object id="117" name="cracken" x="1052.5" y="1129" width="95" height="100"/>
-  <object id="118" name="cracken" x="757.5" y="213" width="95" height="100"/>
+  <object id="117" name="cracken" x="606.5" y="875" width="95" height="100"/>
+  <object id="118" name="cracken" x="1073.5" y="661" width="95" height="100"/>
   <object id="119" name="cracken" x="19.5" y="1453" width="95" height="100"/>
   <object id="120" name="Tesouro1" x="264" y="1501.33" width="56" height="57.3333"/>
   <object id="121" name="Tesouro2" x="1384" y="240.667" width="56" height="57.3333"/>

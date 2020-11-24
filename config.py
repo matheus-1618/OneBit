@@ -46,12 +46,25 @@ GRAY = (192, 192, 192)
 #Configuração itens
 RUM_SPREAD=15
 CARNE_LIFE=10
-CARNE_XP=5
-TESOURO_XP=100
+CARNE_XP=10
+TESOURO_XP=50
 
 RUM_IMG='bottle.png'
 MEAT_IMG='Carne.png'
 TESOURO_IMG= 'chest_SE (1).png'
+
+
+#Imagem inicial
+INIT_IMG=['frame-1.gif','frame-2.gif','frame-3.gif','frame-4.gif','frame-5.gif','frame-6.gif']
+
+#Imagem game over
+OVER_IMG=['fram-1.gif','fram-2.gif','fram-3.gif','fram-4.gif','fram-5.gif','fram-6.gif','fram-7.gif','fram-8.gif','fram-9.gif','fram-10.gif','fram-11.gif','fram-12.gif','fram-13.gif','fram-14.gif']
+
+#Imagem de transição
+TRAN_IMG=['frae-1.gif','frae-2.gif','frae-3.gif','frae-4.gif','frae-5.gif','frae-6.gif','frae-7.gif','frae-8.gif','frae-9.gif','frae-10.gif','frae-11.gif','frae-12.gif','frae-13.gif','frae-14.gif','frae-15.gif','frae-15.gif','frae-16.gif','frae-17.gif','frae-18.gif','frae-19.gif','frae-20.gif','frae-21.gif','frae-22.gif','frae-23.gif','frae-24.gif','frae-25.gif','frae-26.gif','frae-27.gif','frae-28.gif','frae-29.gif','frae-30.gif','frae-31.gif','frae-32.gif','frae-33.gif','frae-34.gif','frae-35.gif','frae-36.gif','frae-37.gif','frae-38.gif','frae-39.gif','frae-40.gif']
+
+#Imagem de vitória
+WIN_IMG=['mar-1.gif','mar-2.gif','mar-3.gif','mar-4.gif','mar-5.gif','mar-6.gif','mar-7.gif','mar-8.gif','mar-9.gif','mar-10.gif','mar-11.gif','mar-12.gif','mar-13.gif','mar-14.gif','mar-15.gif']
 
 #Configurações gerais navio :
 
@@ -90,10 +103,10 @@ dt_shot= 700
 CRACKEN_IMG = 'enemie.png'
 CRACKEN_SPEEDS = [150, 100, 75, 125]
 CRACKEN_HIT_RECT = pygame.Rect(0, 0, 30, 30)
-CRACKEN_HEALTH = 280
+CRACKEN_HEALTH = 200
 CRACKEN_DAMAGE = 15
 CRACKEN_KNOCKBACK = 20
-CRACKEN_XP=250
+CRACKEN_XP=200
 AVOID_RADIUS = 50
 
 MOB_KNOCKBACK= 20   #Recuo
