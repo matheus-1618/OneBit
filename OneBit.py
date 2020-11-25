@@ -41,10 +41,11 @@ class Jogo:
         self.clock = pygame.time.Clock()
         
         #------Inicializando Fases e transições------#
-        self.playing = True # utilizada para controlar o looping 'run'
+        self.playing = True                               # utilizada para controlar o looping 'run'
         self.paused = False 
         self.GAMEOVER = False
         self.TRANSITION= False
+        self.INSTRUCTION=False
         self.WINNER= False
         self.Fase1 = True
         self.Fase2 = False
@@ -54,16 +55,16 @@ class Jogo:
         #------Inicializando carregamento------#
         self.load_data()
 
+        self.xp_total=0                                    # Xp acumulado total 
 
-        self.xp_total=0      #Xp acumulado total 
+        self.propg= CANNONBALL_PROPG                       #Direcionamento dos tiros
 
-        self.propg= CANNONBALL_PROPG  #Direcionamento dos tiros
+        self.last_respawn=0                                #tempo para respawn        
 
-        self.last_respawn=0   #tempo para respawn        
+        self.last_spawn=0                                  #Variavel para tempo de spawn       
 
-        self.last_spawn=0     #Variavel para tempo de spawn       
-
-        self.GAMEOVER = False  #Variavel para iniciar a tela de Gameover
+        self.GAMEOVER = False                              #Variavel para iniciar a tela de Gameover
+    
     def load_data(self):
         
         #------Caminhos para a busca de arquivo------#
@@ -87,6 +88,11 @@ class Jogo:
         self.init_img ={}
         for imagem in INIT_IMG:
             self.init_img[imagem]=pygame.image.load(path.join(IMG_DIR, imagem)).convert_alpha()
+
+        #------Imagens de instrução------#
+        self.instruction_img ={}
+        for img in INST_IMG:
+            self.instruction_img[img]=pygame.image.load(path.join(IMG_DIR,img))
 
         #------Imagens de transição------#
         self.transition_img ={}
@@ -129,9 +135,8 @@ class Jogo:
         self.level2.set_volume(0.5)
         self.winner = pygame.mixer.Channel(6)
         self.winner.set_volume(0.3)
-        #pygame.mixer.music.load(path.join(MUSIC_DIR, 'pirates.ogg'))
-        #pygame.mixer.music.set_volume(0.5)
-        #Dicionário com os efeitos sonoros utilziados
+
+        #Dicionário com os efeitos sonoros utilizados
         self.sound_effects = {}
         self.sound_effects['abertura'] = pygame.mixer.Sound(path.join(MUSIC_DIR, 'ONE_PIECE.ogg'))
         self.sound_effects['game over'] = pygame.mixer.Sound(path.join(MUSIC_DIR, 'final.mp3'))
@@ -146,6 +151,7 @@ class Jogo:
         self.sound_effects['pirata2']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'pirate2.mp3' ))
         self.sound_effects['pirata3']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'pirate3.mp3' ))
         self.sound_effects['pirata4']=pygame.mixer.Sound(path.join(EFFECTS_DIR,'pirate4.mp3' ))
+        
         #------Importando Imagens utilizadas------#
 
         self.boat_img = pygame.image.load(path.join(img_folder, BOAT_IMG)).convert_alpha()
@@ -199,7 +205,7 @@ class Jogo:
     def new(self):
         
         #Futuramente chamar last_spawn para mudança de fase
-        while self.init_load: # carrega o Load novamente, cada vez q mudar de fase
+        while self.init_load:                               # carrega o Load novamente, cada vez q mudar de fase
             self.load_data()
             self.init_load = False
             self.last_respawn=  pygame.time.get_ticks()
@@ -314,6 +320,7 @@ class Jogo:
             #Spawnando a primeira bala de canhão
             if tile_object.name== 'cannon3':
                 Cannonball2(self,vec(tile_object.x, tile_object.y),vec(-1,0))
+        
         #------Camera------#
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False        
@@ -321,18 +328,18 @@ class Jogo:
     def respawn(self,type): 
         #Spawnando tesouros pelo mapa
         if type == 'Tesouro':
-            aleatorio=choice([1,2,3,4])                           #Sorteando posição de respawn
+            aleatorio=choice([1,2,3,4])                             #Sorteando posição de respawn
             if aleatorio==1:
                 for sprite in self.tesouro1.sprites(): 
                     sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()     #Pegando tempo de spawn
+                    self.last_spawn = pygame.time.get_ticks()        #Pegando tempo de spawn
                 for tile_object in self.map.tmxdata.objects:
                     if tile_object.name == 'Tesouro1':               #Posição 1
                         Tesouro(self,tile_object.x, tile_object.y)
             if aleatorio==2:
                 for sprite in self.tesouro2.sprites(): 
                     sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()      #Pegando tempo de spawn
+                    self.last_spawn = pygame.time.get_ticks()        #Pegando tempo de spawn
                 for tile_object in self.map.tmxdata.objects:
                     if tile_object.name == 'Tesouro2':                #Posição 2
                         Tesouro(self,tile_object.x, tile_object.y)
@@ -350,6 +357,7 @@ class Jogo:
                 for tile_object in self.map.tmxdata.objects:        
                     if tile_object.name == 'Tesouro4':                 #Posição 4
                         Tesouro(self,tile_object.x, tile_object.y)
+        
         #Spawnando canhões nas ilhas
         if type=='cannons':
             channel2=self.sound_effects['canhao'].play() 
@@ -510,7 +518,7 @@ class Jogo:
 
     def run(self):
         
-        #Iniciando o mixer de música
+    #Iniciando o mixer de música
         if self.Fase1==True:
             self.level1.play(self.sound_effects['level1 theme']) 
             self.level2.stop()
@@ -546,8 +554,7 @@ class Jogo:
                 self.passagem_imagem+=1
                 if self.passagem_imagem>5:
                     self.passagem_imagem=1
-            self.clock.tick(30)#Contagem  interna pra vinda dos crackens                                 # Alterna exibição
-            self.screen.fill(BLACK)
+            self.clock.tick(30)                                       #Contagem  interna pra vinda dos crackens                                 
             
             # Fundo de tela
             self.image = self.init_img['frame-{}.gif'.format(self.passagem_imagem)]  
@@ -571,13 +578,62 @@ class Jogo:
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_RETURN:                    # Se apertar Enter, entra no Jogo
                         running = False
-                        self.Fase1 = True
+                        self.INSTRUCTION=True
+                        self.Fase1 = False
                         self.Fase2=False
                     if event.key == pygame.K_ESCAPE:
                         self.quit()
         self.abertura.stop()
+    
+    #------Criando Tela de Instruções------#
+    def instruction_screen(self):                                        # Exibe a tela de instruções do jogo
+        
+        if self.INSTRUCTION :                                          
+        
+            self.passagem_imagemi = 1
+            self.abertura.play(self.sound_effects['abertura'])
+            running = True 
+            self.last_updatei = pygame.time.get_ticks()                                              
+            self.clock.tick(30)                                           #Contagem  interna pra vinda dos crackens
+
+            while running:
+                now = pygame.time.get_ticks()
+                delta_t=now - self.last_updatei
+                
+                if delta_t>7000:
+                    delta_t=0
+                    self.last_updatei=now
+                    self.passagem_imagemi+=1
+                    if self.passagem_imagemi>2:
+                        self.passagem_imagemi=1
+                
+                # Imagem tela de instruções:
+                
+                self.image = self.instruction_img['inst-{}.png'.format(self.passagem_imagemi)]
+                self.instruction_img['inst-{}.png'.format(self.passagem_imagemi)] =  pygame.transform.scale(self.image, (WIDTH, HEIGHT))
+                
+                self.image_rect = self.image.get_rect()
+                self.image_rect.center = (WIDTH/2, self.image_rect.height/2)
+                self.screen.blit(self.image, self.image_rect)
+                pygame.display.flip()
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                        self.quit()
+                    
+                    if event.type == pygame.KEYUP:
+                        if event.key == pygame.K_RETURN:                    # Se apertar Enter, entra no Jogo
+                            running = False
+                            self.INSTRUCTION=False
+                            self.Fase1 = True
+                            self.Fase2=False
+                        if event.key == pygame.K_ESCAPE:
+                            self.quit()
+            self.abertura.stop()
+
     #------Criando Tela de transição de fase------#
-    def troca_de_fase_screen(self):                                            # Exibe a tela inicial do jogo
+    def troca_de_fase_screen(self):                                          
         if self.TRANSITION:
             self.passagem_imagem3=1
             self.level1.stop()
@@ -594,10 +650,8 @@ class Jogo:
                     self.passagem_imagem3+=1
                     if self.passagem_imagem3>39:
                         self.passagem_imagem3=1
-                self.clock.tick(30)#Contagem  interna pra vinda dos crackens
-                                 # Alterna exibição
-                self.screen.fill(BLACK)
-                
+                self.clock.tick(30)                                        #Contagem  interna pra vinda dos crackens
+                                
                 # Fundo de tela
                 self.image = self.transition_img['frae-{}.gif'.format(self.passagem_imagem3)]   
                 self.image_rect = self.image.get_rect()
@@ -623,19 +677,19 @@ class Jogo:
                         if event.key == pygame.K_RETURN:  
                             running = False                  
                             self.Fase2 = True
-                            self.Fase1 
+                            self.Fase1 = False
                             
                         if event.key == pygame.K_ESCAPE:
                             self.quit()
             self.transition.stop()
      #------Criando Tela de game_over------#
-    def game_over_screen(self): # Exibe a tela de derrota do jogo
+    def game_over_screen(self):                                          # Exibe a tela de derrota do jogo
         if self.GAMEOVER:
             self.passagem_imagem2=1
             self.level1.stop()
             self.level2.stop()
             self.game_over.play(self.sound_effects['game over'])
-            running = True # Configura o looping
+            running = True                                               # Configura o looping
             self.last_update2=pygame.time.get_ticks()
 
             while running:
@@ -647,13 +701,14 @@ class Jogo:
                     self.passagem_imagem2+=1
                     if self.passagem_imagem2>14:
                         self.passagem_imagem2=1
-                self.clock.tick(30)#Contagem  interna pra vinda dos crackens
-                self.screen.fill(BLACK)
+                self.clock.tick(30)                                       #Contagem  interna pra vinda dos crackens
+                
                 # Fundo de tela
                 self.image = self.game_over_img['fram-{}.gif'.format(self.passagem_imagem2)]  
                 self.image_rect = self.image.get_rect()
                 self.image_rect.center = (WIDTH/2, self.image_rect.height/2)
                 self.screen.blit(self.image, self.image_rect)
+                
                 # Desenha o texto 
                 self.draw_text("GAME OVER", self.kenpixel_80, RED, WIDTH/2, HEIGHT/2 -20)
                 self.draw_text("PRESS 'ENTER' TO START AGAIN", self.romulus_30, BLACK, WIDTH/2, HEIGHT/2 + 120)
@@ -663,7 +718,7 @@ class Jogo:
                         running = False
                         self.quit()
                     if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_RETURN: # Se apertar Enter, entra no Jogo
+                        if event.key == pygame.K_RETURN:               # Se apertar Enter, entra no Jogo
                             running = False
                             self.GAMEOVER= False
                             self.playing=True
@@ -692,9 +747,7 @@ class Jogo:
                     self.passagem_imagem1+=1
                     if self.passagem_imagem1>14:
                         self.passagem_imagem1=1
-                self.clock.tick(30)#Contagem  interna pra vinda dos crackens
-                                 # Alterna exibição
-                self.screen.fill(BLACK)
+                self.clock.tick(30)                                     # Contagem  interna pra vinda dos crackens
                 
                 # Fundo de tela
                 self.image = self.winner_img['mar-{}.gif'.format(self.passagem_imagem1)]  
@@ -716,7 +769,7 @@ class Jogo:
                         self.quit()
                     
                     if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_RETURN: # Se apertar Enter, entra no Jogo
+                        if event.key == pygame.K_RETURN:                 # Se apertar Enter, entra no Jogo
                             running = False
                             self.GAMEOVER= False
                             self.playing=True
@@ -860,8 +913,7 @@ class Jogo:
         for i in lista_tesouro:
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
-                channel2=self.sound_effects['pirata2'].play()
-                #self.current_xp += BOAT_XP  
+                channel2=self.sound_effects['pirata2'].play() 
                 self.xp_total+=TESOURO_XP                    
                 hit.kill()
                 self.respawn('Tesouro')
@@ -874,7 +926,6 @@ class Jogo:
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
                 channel2=self.sound_effects['pirata4'].play()
-                #self.current_xp += BOAT_XP  
                 self.boat.health+= CARNE_LIFE
                 self.xp_total+=CARNE_XP                   
                 hit.kill()
@@ -882,21 +933,17 @@ class Jogo:
 
         #Criando lista para armazenar bebida
         lista_rum=[self.Rum1, self.Rum2, self.Rum3, self.Rum4]
+        
         for i in lista_rum:
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
                 channel2=self.sound_effects['pirata3'].play()
-                self.propg+=5
-                #self.current_xp += BOAT_XP                       
+                self.propg+=5               
                 hit.kill()
                 self.respawn('Rum')
 
-                # aumenta stamina e score
-                #self.stamine += BOAT_STAMINA
-                #self.score += BOAT_SCORE
-
     def proxima_fase(self):
-        if self.passa_fase== 0: # se estava na fase inicial
+        if self.passa_fase== 0:                                 # se estava na fase inicial
             self.Fase1 = False
             self.playing = False
             self.TRANSITION=True
@@ -905,14 +952,14 @@ class Jogo:
             self.boat.health=BOAT_HEALTH
             self.boat.speed= BOAT_SPEED
             self.propg= CANNONBALL_PROPG
-            self.passa_fase= 1 # Muda o contador para 1 (próximo mapa)
+            self.passa_fase= 1                                   # Muda o contador para 1 (próximo mapa)
             
-        elif self.passa_fase== 1: # se estava na última fase
+        elif self.passa_fase== 1:                                # se estava na última fase
             self.Fase2 = False
             self.playing = False
             self.Fase1 = False
             self.xp_total=0
-            self.passa_fase= 0 # deixa ajustado para a fase inicial
+            self.passa_fase= 0                                   # deixa ajustado para a fase inicial
             self.init_load = False
             self.TRANSITION=False
             self.GAMEOVER = False
@@ -951,7 +998,7 @@ class Jogo:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             if self.draw_debug:
                 pygame.draw.rect(self.screen, CYAN, self.camera.apply_rect(sprite.hit_rect), 1)
-        #RETIRAR DEPOIS,APENAS PARA AUXILIO DE OBJETOS
+        
         if self.draw_debug:
             for wall in self.ilhas:
                 pygame.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
@@ -993,6 +1040,9 @@ jogo= Jogo()
 
 while True:
     jogo.init_screen()
+    while jogo.INSTRUCTION:
+        jogo.instruction_screen()
+    
     while jogo.Fase1:
         jogo.new()
         jogo.run()

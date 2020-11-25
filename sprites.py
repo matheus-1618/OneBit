@@ -183,7 +183,7 @@ class Cracken(pygame.sprite.Sprite):
         self.health = CRACKEN_HEALTH
         self.speed = choice(CRACKEN_SPEEDS)
 
-    def avoid_mobs(self):
+    def avoid_crackens(self):
         for mob in self.jogo.crackens:
             if mob != self:
                 dist = self.pos - mob.pos
@@ -196,7 +196,7 @@ class Cracken(pygame.sprite.Sprite):
         # self.rect = self.image.get_rect()
         self.rect.center = self.pos
         self.acc = vec(1, 0).rotate(-self.rot)
-        self.avoid_mobs()
+        self.avoid_crackens()
         self.acc.scale_to_length(self.speed)
         self.acc += self.vel * -1
         self.vel += self.acc * self.jogo.dt
@@ -335,10 +335,6 @@ class Pirata_esquerda(pygame.sprite.Sprite):
         self.pos += self.vel* self.jogo.dt
         self.rect.center = self.pos
         self.hit_rect.centerx= self.pos.x
-        #collide_with_ilhas(self, self.jogo.ilhas, 'x')
-        #self.hit_rect.centery = self.pos.y
-        #collide_with_ilhas(self, self.jogo.ilhas, 'y')
-        #self.rect.center = self.hit_rect.center
         
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.x < - 20:
@@ -384,10 +380,6 @@ class Pirata_direita(pygame.sprite.Sprite):
         self.pos += self.vel* self.jogo.dt
         self.rect.center = self.pos
         self.hit_rect.centerx= self.pos.x
-        #collide_with_ilhas(self, self.jogo.ilhas, 'x')
-        #self.hit_rect.centery = self.pos.y
-        #collide_with_ilhas(self, self.jogo.ilhas, 'y')
-        #self.rect.center = self.hit_rect.center
 
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.x > self.jogo.map.width:
@@ -433,10 +425,6 @@ class Pirata_cima(pygame.sprite.Sprite):
         self.pos += self.vel* self.jogo.dt
         self.rect.center = self.pos
         self.hit_rect.centerx= self.pos.x
-        #collide_with_ilhas(self, self.jogo.ilhas, 'x')
-        #self.hit_rect.centery = self.pos.y
-        #collide_with_ilhas(self, self.jogo.ilhas, 'y')
-        #self.rect.center = self.hit_rect.center
 
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.y < - 20:
@@ -484,10 +472,6 @@ class Pirata_baixo(pygame.sprite.Sprite):
         self.pos += self.vel* self.jogo.dt
         self.rect.center = self.pos
         self.hit_rect.centerx= self.pos.x
-        #collide_with_ilhas(self, self.jogo.ilhas, 'x')
-        #self.hit_rect.centery = self.pos.y
-        #collide_with_ilhas(self, self.jogo.ilhas, 'y')
-        #self.rect.center = self.hit_rect.center
 
         #Respawnando após sair do mapa ou "morrer"
         if (self.pos.y > 20+ self.jogo.map.height):

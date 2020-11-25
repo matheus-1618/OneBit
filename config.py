@@ -57,6 +57,9 @@ TESOURO_IMG= 'chest_SE (1).png'
 #Imagem inicial
 INIT_IMG=['frame-1.gif','frame-2.gif','frame-3.gif','frame-4.gif','frame-5.gif','frame-6.gif']
 
+#Imagem instruções
+INST_IMG=['inst-1.png','inst-2.png']
+
 #Imagem game over
 OVER_IMG=['fram-1.gif','fram-2.gif','fram-3.gif','fram-4.gif','fram-5.gif','fram-6.gif','fram-7.gif','fram-8.gif','fram-9.gif','fram-10.gif','fram-11.gif','fram-12.gif','fram-13.gif','fram-14.gif']
 
