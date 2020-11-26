@@ -22,7 +22,7 @@ from config import *
 from sprites import *
 
 
-#----- Criando classe Jogo responsável por atualizações e tratamento de eventos -----#
+#----- Criando classe Jogo -----#
 
 class Jogo:
     
@@ -41,7 +41,7 @@ class Jogo:
         self.clock = pygame.time.Clock()
         
         #------Inicializando Fases e transições------#
-        self.playing = True                               # utilizada para controlar o looping 'run'
+        self.playing = True                               
         self.paused = False 
         self.GAMEOVER = False
         self.TRANSITION= False
@@ -325,9 +325,9 @@ class Jogo:
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False        
 
-    def respawn(self,type): 
+    def resnasce(self,string): 
         #Spawnando tesouros pelo mapa
-        if type == 'Tesouro':
+        if string == 'Tesouro':
             aleatorio=choice([1,2,3,4])                             #Sorteando posição de respawn
             if aleatorio==1:
                 for sprite in self.tesouro1.sprites(): 
@@ -359,7 +359,7 @@ class Jogo:
                         Tesouro(self,tile_object.x, tile_object.y)
         
         #Spawnando canhões nas ilhas
-        if type=='cannons':
+        if string=='cannons':
             channel2=self.sound_effects['canhao'].play() 
             sorteando=choice([1,2,3,4])
             if sorteando ==1:
@@ -388,7 +388,7 @@ class Jogo:
                         Cannonball2(self,vec(tile_object.x, tile_object.y),vec(0,1))
         
         #Respawn piratas esquerda:
-        if type == 'pirate_l':
+        if string == 'pirate_l':
             aleatorio=choice([1,2])                            #Sorteando posição
             if aleatorio ==1:
                 for sprite in self.pirates_l1.sprites(): 
@@ -405,7 +405,7 @@ class Jogo:
                         Pirata_esquerda(self,self.pirate_esquerda[PIRATA_ESQUERDA], tile_object.x, tile_object.y)
 
         #Respawn piratas direita:
-        if type == 'pirate_r':
+        if string == 'pirate_r':
             aleatorio=choice([1,2])                            #Sorteando posição   
             if aleatorio==1:
                 for sprite in self.pirates_r1.sprites(): 
@@ -421,7 +421,7 @@ class Jogo:
                         Pirata_direita(self,self.pirate_direita[PIRATA_DIREITA], tile_object.x, tile_object.y)
         
         #Respawn piratas topo:
-        if type == 'pirate_t':
+        if string == 'pirate_t':
             aleatorio=choice([1,2])                             #Sorteando posição
             if aleatorio==1:
                 for sprite in self.pirates_t1.sprites(): 
@@ -437,7 +437,7 @@ class Jogo:
                         Pirata_baixo(self,self.pirate_baixo[PIRATA_BAIXO], tile_object.x, tile_object.y)
         
         #Respawn piratas base:
-        if type == 'pirate_b':
+        if string == 'pirate_b':
             aleatorio=choice([1,2])                              #Sorteando posição
             if aleatorio==1:
                 for sprite in self.pirates_b1.sprites(): 
@@ -453,7 +453,7 @@ class Jogo:
                         Pirata_cima(self,self.pirate_cima[PIRATA_CIMA], tile_object.x, tile_object.y)    
         
         #Respawn Carnes:
-        if type == 'Meat':
+        if string == 'Meat':
             aleatorio=choice([1,2,3,4])                           #Sorteando posição de respawn
             if aleatorio==1:
                 for sprite in self.Meat1.sprites(): 
@@ -485,7 +485,7 @@ class Jogo:
                         Carne(self,tile_object.x, tile_object.y)
 
         #Respawn Rum:
-        if type == 'Rum':
+        if string == 'Rum':
             aleatorio=choice([1,2,3,4])                             #Sorteando posição de respawn
             if aleatorio==1:
                 for sprite in self.Rum1.sprites(): 
@@ -576,7 +576,7 @@ class Jogo:
                     self.quit()
                 
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:                    # Se apertar Enter, entra no Jogo
+                    if event.key == pygame.K_RETURN:                    
                         running = False
                         self.INSTRUCTION=True
                         self.Fase1 = False
@@ -623,7 +623,7 @@ class Jogo:
                         self.quit()
                     
                     if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_RETURN:                    # Se apertar Enter, entra no Jogo
+                        if event.key == pygame.K_RETURN:                    
                             running = False
                             self.INSTRUCTION=False
                             self.Fase1 = True
@@ -718,7 +718,7 @@ class Jogo:
                         running = False
                         self.quit()
                     if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_RETURN:               # Se apertar Enter, entra no Jogo
+                        if event.key == pygame.K_RETURN:               
                             running = False
                             self.GAMEOVER= False
                             self.playing=True
@@ -769,7 +769,7 @@ class Jogo:
                         self.quit()
                     
                     if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_RETURN:                 # Se apertar Enter, entra no Jogo
+                        if event.key == pygame.K_RETURN:                 
                             running = False
                             self.GAMEOVER= False
                             self.playing=True
@@ -916,7 +916,7 @@ class Jogo:
                 channel2=self.sound_effects['pirata2'].play() 
                 self.xp_total+=TESOURO_XP                    
                 hit.kill()
-                self.respawn('Tesouro')
+                self.resnasce('Tesouro')
 
         #Criando lista para armazenar carne
 
@@ -929,7 +929,7 @@ class Jogo:
                 self.boat.health+= CARNE_LIFE
                 self.xp_total+=CARNE_XP                   
                 hit.kill()
-                self.respawn('Meat')
+                self.resnasce('Meat')
 
         #Criando lista para armazenar bebida
         lista_rum=[self.Rum1, self.Rum2, self.Rum3, self.Rum4]
@@ -940,7 +940,7 @@ class Jogo:
                 channel2=self.sound_effects['pirata3'].play()
                 self.propg+=5               
                 hit.kill()
-                self.respawn('Rum')
+                self.resnasce('Rum')
 
     def proxima_fase(self):
         if self.passa_fase== 0:                                 # se estava na fase inicial
@@ -952,14 +952,14 @@ class Jogo:
             self.boat.health=BOAT_HEALTH
             self.boat.speed= BOAT_SPEED
             self.propg= CANNONBALL_PROPG
-            self.passa_fase= 1                                   # Muda o contador para 1 (próximo mapa)
+            self.passa_fase= 1                                   
             
-        elif self.passa_fase== 1:                                # se estava na última fase
+        elif self.passa_fase== 1:                              
             self.Fase2 = False
             self.playing = False
             self.Fase1 = False
             self.xp_total=0
-            self.passa_fase= 0                                   # deixa ajustado para a fase inicial
+            self.passa_fase= 0                                  
             self.init_load = False
             self.TRANSITION=False
             self.GAMEOVER = False

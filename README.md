@@ -32,7 +32,7 @@ Se quiser SAIR, à qualquer momento, clice no botão 'ESC' para fechar a janela.
 
 # Créditos
 
-A produção desse jogo contou com o uso da playlist do canal KidsCanCode. O canal possibilitou o maior entendimento a respeito da biblioteca Pygame e a utilização de suas estruturas. Algumas estruturas de dados foram adapatadas conforme o avanço do desenvolvimento do game, como sa classes relacionadas ao mapa, sprites e camera. Portanto, agradecemos ao canal pelo apoio que possibilitou na confecção desse jogo. Agradecemos também aos alunos Guilherme Rosada e Jamesson Santos (Turma 2020.1- INSPER), pelo suporte e indicação de elementos utilizados no game.
+A produção desse jogo contou com o uso da playlist do canal KidsCanCode. O canal possibilitou o maior entendimento a respeito da biblioteca Pygame e a utilização de suas estruturas. Algumas estruturas de dados foram adaptadas conforme o avanço do desenvolvimento do game, como sa classes relacionadas ao mapa, sprites e camera. Portanto, agradecemos ao canal pelo apoio que possibilitou na confecção desse jogo. Agradecemos também aos alunos Guilherme Rosada e Jamesson Santos (Turma 2020.1- INSPER), pelo suporte e indicação de elementos utilizados no game.
 
 Link canal KidsCanCode: https://www.youtube.com/channel/UCNaPQ5uLX5iIEHUCLmfAgKg
 

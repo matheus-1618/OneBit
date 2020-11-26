@@ -279,10 +279,9 @@ class Cannonball2(pygame.sprite.Sprite):
         delta_t=now - self.jogo.last_respawn
         self.pos += self.vel * self.jogo.dt
         self.rect.center = self.pos
-        #if pygame.sprite.spritecollideany(self, self.jogo.ilhas):
-            #self.kill()
+    
         if delta_t> 3000:
-            self.jogo.respawn('cannons')
+            self.jogo.resnasce('cannons')
 
 class Ilhas (pygame.sprite.Sprite):
         def __init__(self, jogo, x, y):
@@ -338,10 +337,10 @@ class Pirata_esquerda(pygame.sprite.Sprite):
         
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.x < - 20:
-            self.jogo.respawn('pirate_l') 
+            self.jogo.resnasce('pirate_l') 
         if self.health <= 0:
             self.jogo.xp_total+=PIRATA_XP
-            self.jogo.respawn('pirate_l')        
+            self.jogo.resnasce('pirate_l')        
 
     def draw_health(self):
         if self.health >= 10:
@@ -383,10 +382,10 @@ class Pirata_direita(pygame.sprite.Sprite):
 
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.x > self.jogo.map.width:
-            self.jogo.respawn('pirate_r')
+            self.jogo.resnasce('pirate_r')
         if self.health <= 0:
             self.jogo.xp_total+=PIRATA_XP
-            self.jogo.respawn('pirate_r')
+            self.jogo.resnasce('pirate_r')
     
     def draw_health(self):
         if self.health > 15:
@@ -428,10 +427,10 @@ class Pirata_cima(pygame.sprite.Sprite):
 
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.y < - 20:
-            self.jogo.respawn('pirate_b')
+            self.jogo.resnasce('pirate_b')
         if self.health <= 0:
             self.jogo.xp_total+=PIRATA_XP
-            self.jogo.respawn('pirate_b')
+            self.jogo.resnasce('pirate_b')
 
     def draw_health(self):
         if self.health > 15:
@@ -475,10 +474,10 @@ class Pirata_baixo(pygame.sprite.Sprite):
 
         #Respawnando após sair do mapa ou "morrer"
         if (self.pos.y > 20+ self.jogo.map.height):
-            self.jogo.respawn('pirate_t')
+            self.jogo.resnasce('pirate_t')
         if self.health <= 0:
             self.jogo.xp_total+=PIRATA_XP
-            self.jogo.respawn('pirate_t')
+            self.jogo.resnasce('pirate_t')
     
     def draw_health(self):
         if self.health > 15:
@@ -548,8 +547,8 @@ class Carne(pygame.sprite.Sprite):
         delta_respawn = now - self.jogo.last_spawn
     
         #CONDIÇÃO PARA SPAWN:
-        if delta_respawn >7000:                        #Esperando 7 segundos para respawn
-            self.jogo.respawn('Meat') 
+        if delta_respawn >7000:                        #Esperando 7 segundos para resnasce
+            self.jogo.resnasce('Meat') 
        
 class Rum (pygame.sprite.Sprite):
 
@@ -570,8 +569,8 @@ class Rum (pygame.sprite.Sprite):
         delta_respawn = now - self.jogo.last_spawn
     
         #CONDIÇÃO PARA RESPAWN:
-        if delta_respawn >7000:                         #Esperando 7 segundos para respawn
-            self.jogo.respawn('Rum') 
+        if delta_respawn >7000:                         #Esperando 7 segundos para resnasce
+            self.jogo.resnasce('Rum') 
 
 class Tesouro(pygame.sprite.Sprite):
 
@@ -592,5 +591,5 @@ class Tesouro(pygame.sprite.Sprite):
         delta_respawn = now - self.jogo.last_spawn
     
         #CONDIÇÃO PARA SPAWN:
-        if delta_respawn >3500:                        #Esperando 7 segundos para respawn
-            self.jogo.respawn('Tesouro') 
+        if delta_respawn >3500:                        #Esperando 7 segundos para resnasce
+            self.jogo.resnasce('Tesouro') 
