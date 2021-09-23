@@ -210,6 +210,7 @@ class Jogo:
             self.init_load = False
             self.last_respawn=  pygame.time.get_ticks()
             self.last_spawn = pygame.time.get_ticks()
+        
         #------Criando sprites------# 
         
         self.all_sprites = pygame.sprite.Group()            #Grupo geral
@@ -234,18 +235,23 @@ class Jogo:
         self.cannon4=pygame.sprite.Group()
 
         #Criando sprites de itens:
-        self.Meat1= pygame.sprite.Group()
-        self.Meat2= pygame.sprite.Group()
-        self.Meat3= pygame.sprite.Group()
-        self.Meat4= pygame.sprite.Group()
-        self.Rum1= pygame.sprite.Group()
-        self.Rum2= pygame.sprite.Group()
-        self.Rum3= pygame.sprite.Group()
-        self.Rum4= pygame.sprite.Group()
-        self.tesouro1= pygame.sprite.Group()
-        self.tesouro2= pygame.sprite.Group()
-        self.tesouro3= pygame.sprite.Group()
-        self.tesouro4= pygame.sprite.Group()
+        # self.Meat1= pygame.sprite.Group()
+        # self.Meat2= pygame.sprite.Group()
+        # self.Meat3= pygame.sprite.Group()
+        # self.Meat4= pygame.sprite.Group()
+        # self.Rum1= pygame.sprite.Group()
+        # self.Rum2= pygame.sprite.Group()
+        # self.Rum3= pygame.sprite.Group()
+        # self.Rum4= pygame.sprite.Group()
+        # self.tesouro1= pygame.sprite.Group()
+        # self.tesouro2= pygame.sprite.Group()
+        # self.tesouro3= pygame.sprite.Group()
+        # self.tesouro4= pygame.sprite.Group()
+  
+        # Itens
+        self.lista_meat = [pygame.sprite.Group() for i in range(0,4)]
+        self.lista_rum = [pygame.sprite.Group() for i in range(0,4)]
+        self.lista_tesouro = [pygame.sprite.Group() for i in range(0,4)]
 
         #------Criando objetos no mapa------#
 
@@ -325,38 +331,23 @@ class Jogo:
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False        
 
+    def sortea_posicao (self, listaItem, tipoDeObjeto, string, tamanho):
+        aleatorio = choice(range(1,5))
+
+        for i in range(1,tamanho+1):
+            if aleatorio == i : self.spawan_na_posicaoX (listaItem, tipoDeObjeto, string, i)
+        
+    def spawan_na_posicaoX (self, lista_item, tipoDeObjeto,string, num):
+
+        for sprite in lista_item[num-1].sprites(): 
+            sprite.kill()
+            self.last_spawn = pygame.time.get_ticks()                  #Pegando tempo de spawn
+        for tile_object in self.map.tmxdata.objects:
+            if tile_object.name == string + str(num):               #Na posicao X que será spawnado
+                tipoDeObjeto(self,tile_object.x, tile_object.y)
+
+
     def resnasce(self,string): 
-        #Spawnando tesouros pelo mapa
-        if string == 'Tesouro':
-            aleatorio=choice([1,2,3,4])                             #Sorteando posição de respawn
-            if aleatorio==1:
-                for sprite in self.tesouro1.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()        #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Tesouro1':               #Posição 1
-                        Tesouro(self,tile_object.x, tile_object.y)
-            if aleatorio==2:
-                for sprite in self.tesouro2.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()        #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Tesouro2':                #Posição 2
-                        Tesouro(self,tile_object.x, tile_object.y)
-            if aleatorio==3:
-                for sprite in self.tesouro3.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()      #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Tesouro3':                #Posição 3
-                        Tesouro(self,tile_object.x, tile_object.y) 
-            if aleatorio==4:
-                for sprite in self.tesouro4.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()       #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:        
-                    if tile_object.name == 'Tesouro4':                 #Posição 4
-                        Tesouro(self,tile_object.x, tile_object.y)
         
         #Spawnando canhões nas ilhas
         if string=='cannons':
@@ -452,69 +443,17 @@ class Jogo:
                     if tile_object.name == 'pirate_b2':
                         Pirata_cima(self,self.pirate_cima[PIRATA_CIMA], tile_object.x, tile_object.y)    
         
+        #Spawnando tesouros pelo mapa
+        if string == 'Tesouro':
+            self.sortea_posicao(self.lista_tesouro, Tesouro ,'Tesouro',4)
+        
         #Respawn Carnes:
         if string == 'Meat':
-            aleatorio=choice([1,2,3,4])                           #Sorteando posição de respawn
-            if aleatorio==1:
-                for sprite in self.Meat1.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()     #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Meat1':               #Posição 1
-                        Carne(self,tile_object.x, tile_object.y)
-            if aleatorio==2:
-                for sprite in self.Meat2.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()      #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Meat2':                #Posição 2
-                        Carne(self,tile_object.x, tile_object.y)
-            if aleatorio==3:
-                for sprite in self.Meat3.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()      #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Meat3':                #Posição 3
-                        Carne(self,tile_object.x, tile_object.y) 
-            if aleatorio==4:
-                for sprite in self.Meat2.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()       #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:        
-                    if tile_object.name == 'Meat4':                 #Posição 4
-                        Carne(self,tile_object.x, tile_object.y)
+            self.sortea_posicao(self.lista_meat, Carne,'Meat',4)
 
         #Respawn Rum:
         if string == 'Rum':
-            aleatorio=choice([1,2,3,4])                             #Sorteando posição de respawn
-            if aleatorio==1:
-                for sprite in self.Rum1.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()       #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Rum1':                  #Posição 1
-                        Rum(self,tile_object.x, tile_object.y)
-            if aleatorio==2:
-                for sprite in self.Rum2.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()        #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Rum2':                   #Posição 2
-                        Rum(self,tile_object.x, tile_object.y)
-            if aleatorio==3:
-                for sprite in self.Rum3.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()         #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Rum3':                    #Posição 3
-                        Rum(self,tile_object.x, tile_object.y) 
-            if aleatorio==4:
-                for sprite in self.Rum4.sprites(): 
-                    sprite.kill()
-                    self.last_spawn = pygame.time.get_ticks()         #Pegando tempo de spawn
-                for tile_object in self.map.tmxdata.objects:
-                    if tile_object.name == 'Rum4':                    #Posição 4
-                        Rum(self,tile_object.x, tile_object.y)
+            self.sortea_posicao(self.lista_rum, Rum,'Rum',4)
 
     def run(self):
         
@@ -908,9 +847,7 @@ class Jogo:
 
         #------Player colide com Itens------#
         
-        lista_tesouro=[self.tesouro1, self.tesouro2, self.tesouro3, self.tesouro4]
-
-        for i in lista_tesouro:
+        for i in self.lista_tesouro:
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
                 channel2=self.sound_effects['pirata2'].play() 
@@ -920,9 +857,7 @@ class Jogo:
 
         #Criando lista para armazenar carne
 
-        lista_carne=[self.Meat1, self.Meat2, self.Meat3, self.Meat4]
-
-        for i in lista_carne:
+        for i in self.lista_meat:
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
                 channel2=self.sound_effects['pirata4'].play()
@@ -930,11 +865,8 @@ class Jogo:
                 self.xp_total+=CARNE_XP                   
                 hit.kill()
                 self.resnasce('Meat')
-
-        #Criando lista para armazenar bebida
-        lista_rum=[self.Rum1, self.Rum2, self.Rum3, self.Rum4]
         
-        for i in lista_rum:
+        for i in self.lista_rum:
             hits = pygame.sprite.spritecollide (self.boat, i, False, pygame.sprite.collide_mask)
             for hit in hits:
                 channel2=self.sound_effects['pirata3'].play()
