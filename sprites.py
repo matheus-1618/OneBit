@@ -47,8 +47,6 @@ class Boat(pygame.sprite.Sprite):
         #Pegando a ultima direção e tiro
         self.last_dir = self.dir
         self.last_shot = 0
-        
-
         #Controle e direção:
     
         self.esquerda = ""
@@ -129,8 +127,6 @@ class Boat(pygame.sprite.Sprite):
         
         self.last_dir = self.dir
         dir = self.last_dir  
-        
-
     #Atualizando para o jogo
     def update(self):
         self.teclas()
@@ -309,10 +305,12 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-class Pirata_esquerda(pygame.sprite.Sprite):
+# Abstração:
+from abc import ABC, abstractmethod
+class Pirata (pygame.sprite.Sprite, ABC):
     def __init__(self,jogo,img,x,y):
-        self.groups = jogo.all_sprites,jogo.pirates_l1,jogo.pirates_l2 
-        pygame.sprite.Sprite.__init__(self,self.groups)
+        self.groups = jogo.all_sprites
+        # pygame.sprite.Sprite.__init__(self,self.groups)
         self.jogo=jogo
         self.image = img
         self.rect = self.image.get_rect()
@@ -320,27 +318,19 @@ class Pirata_esquerda(pygame.sprite.Sprite):
         self.hit_rect.center = self.rect.center
         self.pos = vec(x,y)
         self.rect.center = self.pos
-        self.dir = vec(-1,0)
         self.speed= choice(PIRATA_SPEED)
+        self.dir = vec(-1,0)
         self.vel = self.dir *self.speed
         self.last_position = vec(x,y)
-        self.health =PIRATA_HEALTH
         self.distance = vec(0,0)
+        self.health =PIRATA_HEALTH
         self.last_update = pygame.time.get_ticks()
 
-    
     def update(self):
         self.vel = self.dir *self.speed
         self.pos += self.vel* self.jogo.dt
         self.rect.center = self.pos
         self.hit_rect.centerx= self.pos.x
-        
-        #Respawnando após sair do mapa ou "morrer"
-        if self.pos.x < - 20:
-            self.jogo.resnasce('pirate_l') 
-        if self.health <= 0:
-            self.jogo.xp_total+=PIRATA_XP
-            self.jogo.resnasce('pirate_l')        
 
     def draw_health(self):
         if self.health >= 10:
@@ -354,77 +344,50 @@ class Pirata_esquerda(pygame.sprite.Sprite):
         if self.health < PIRATA_HEALTH:
             pygame.draw.rect(self.image, col, self.health_bar)
 
-class Pirata_direita(pygame.sprite.Sprite):
+
+class Pirata_esquerda(Pirata):
     def __init__(self,jogo,img,x,y):
+        super().__init__(jogo, img, x, y)
+        self.groups = jogo.all_sprites,jogo.pirates_l1,jogo.pirates_l2 
+        pygame.sprite.Sprite.__init__(self,self.groups)
+        self.dir = vec(-1,0)
+    
+    def update(self):
+        super().update()
+        #Respawnando após sair do mapa ou "morrer"
+        if self.pos.x < - 20:
+            self.jogo.resnasce('pirate_l') 
+        if self.health <= 0:
+            self.jogo.xp_total+=PIRATA_XP
+            self.jogo.resnasce('pirate_l')        
+
+class Pirata_direita(Pirata):
+    def __init__(self,jogo,img,x,y):
+        super().__init__(jogo, img, x, y)
         self.groups = jogo.all_sprites, jogo.pirates_r1,jogo.pirates_r2
         pygame.sprite.Sprite.__init__(self,self.groups)
-        self.jogo=jogo
-        self.image = img
-        self.rect = self.image.get_rect()
-        self.hit_rect = PIRATA_HIT_RECT.copy()
-        self.hit_rect.center = self.rect.center
-        self.pos = vec(x,y)
-        self.rect.center = self.pos
         self.dir = vec(1,0)
-        self.speed= choice(PIRATA_SPEED)
-        self.vel = self.dir *self.speed
-        self.last_position = vec(x,y)
-        self.distance = vec(0,0)
-        self.health =PIRATA_HEALTH
-        self.last_update = pygame.time.get_ticks()
-
         
     def update(self):
-        self.vel = self.dir *self.speed
-        self.pos += self.vel* self.jogo.dt
-        self.rect.center = self.pos
-        self.hit_rect.centerx= self.pos.x
 
+        super().update()
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.x > self.jogo.map.width:
             self.jogo.resnasce('pirate_r')
         if self.health <= 0:
             self.jogo.xp_total+=PIRATA_XP
             self.jogo.resnasce('pirate_r')
-    
-    def draw_health(self):
-        if self.health > 15:
-            col = GREEN
-        elif self.health > 10:
-            col = YELLOW
-        else:
-            col = RED
-        width = int(self.rect.width * self.health / PIRATA_HEALTH)
-        self.health_bar = pygame.Rect(0, 0, width, 6)
-        if self.health < PIRATA_HEALTH:
-            pygame.draw.rect(self.image, col, self.health_bar)
 
-class Pirata_cima(pygame.sprite.Sprite):
+class Pirata_cima(Pirata):
     def __init__(self,jogo,img,x,y):
-        self.groups = jogo.all_sprites,jogo.pirates_b1,jogo.pirates_b2 
-        pygame.sprite.Sprite.__init__(self,self.groups)
-        self.jogo=jogo
-        self.image = img
-        self.rect = self.image.get_rect()
-        self.hit_rect = PIRATA_HIT_RECT.copy()
-        self.hit_rect.center = self.rect.center
-        self.pos = vec(x,y)
-        self.rect.center = self.pos
+        super().__init__(jogo, img, x, y)
+        self.groups = jogo.all_sprites,jogo.pirates_b1,jogo.pirates_b2
+        pygame.sprite.Sprite.__init__(self,self.groups) 
         self.dir = vec(0,-1)
-        self.speed= choice(PIRATA_SPEED)
-        self.vel = self.dir *self.speed
-        self.last_position = vec(x,y)
-        self.distance = vec(0,0)
-        self.health =PIRATA_HEALTH
-        self.last_update = pygame.time.get_ticks()
 
-        
     def update(self):
-        self.vel = self.dir *self.speed
-        self.pos += self.vel* self.jogo.dt
-        self.rect.center = self.pos
-        self.hit_rect.centerx= self.pos.x
-
+        
+        super().update()
         #Respawnando após sair do mapa ou "morrer"
         if self.pos.y < - 20:
             self.jogo.resnasce('pirate_b')
@@ -432,46 +395,16 @@ class Pirata_cima(pygame.sprite.Sprite):
             self.jogo.xp_total+=PIRATA_XP
             self.jogo.resnasce('pirate_b')
 
-    def draw_health(self):
-        if self.health > 15:
-            col = GREEN
-        elif self.health > 10:
-            col = YELLOW
-        else:
-            col = RED
-        width = int(self.rect.width * self.health / PIRATA_HEALTH)
-        self.health_bar = pygame.Rect(0, 0, width, 6)
-        if self.health < PIRATA_HEALTH:
-            pygame.draw.rect(self.image, col, self.health_bar)
-
-
-class Pirata_baixo(pygame.sprite.Sprite):
+class Pirata_baixo(Pirata):
     def __init__(self,jogo,img,x,y):
+        super().__init__(jogo, img, x, y)
         self.groups = jogo.all_sprites, jogo.pirates_t1, jogo.pirates_t2 
         pygame.sprite.Sprite.__init__(self,self.groups)
-        self.jogo = jogo
-        self.image = img
-        self.rect = self.image.get_rect()
-        self.hit_rect = PIRATA_HIT_RECT.copy()
-        self.hit_rect.center = self.rect.center
-        self.pos = vec(x,y)
-        self.rect.center = self.pos
         self.dir = vec(0,1)
-        self.speed= choice(PIRATA_SPEED)
-        self.vel = self.dir *self.speed
-        self.last_position = vec(x,y)
-        self.distance = vec(0,0)
-        self.health =PIRATA_HEALTH
-        self.last_update = pygame.time.get_ticks()
-
-    
 
     def update(self):
-        self.vel = self.dir *self.speed
-        self.pos += self.vel* self.jogo.dt
-        self.rect.center = self.pos
-        self.hit_rect.centerx= self.pos.x
-
+        
+        super().update()
         #Respawnando após sair do mapa ou "morrer"
         if (self.pos.y > 20+ self.jogo.map.height):
             self.jogo.resnasce('pirate_t')
@@ -479,17 +412,6 @@ class Pirata_baixo(pygame.sprite.Sprite):
             self.jogo.xp_total+=PIRATA_XP
             self.jogo.resnasce('pirate_t')
     
-    def draw_health(self):
-        if self.health > 15:
-            col = GREEN
-        elif self.health > 10:
-            col = YELLOW
-        else:
-            col = RED
-        width = int(self.rect.width * self.health / PIRATA_HEALTH)
-        self.health_bar = pygame.Rect(0, 0, width, 6)
-        if self.health < PIRATA_HEALTH:
-            pygame.draw.rect(self.image, col, self.health_bar)
 #------Barra de vida do barco------#
 
 def draw_boat_health(surf, x, y, pct):
@@ -532,7 +454,7 @@ class Carne(pygame.sprite.Sprite):
 
     def __init__(self, jogo, x, y):
         self.groups = jogo.all_sprites, jogo.Meat1, jogo.Meat2, jogo.Meat3, jogo.Meat4
-        
+
         # Construtor da classe mãe
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.jogo = jogo  
@@ -540,9 +462,7 @@ class Carne(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.pos = vec (x, y)
         self.rect.center = self.pos
-        
-    def update(self):        
-        
+    def update(self):
         now = pygame.time.get_ticks()                  #Pegando tempo
         delta_respawn = now - self.jogo.last_spawn
     
@@ -554,7 +474,6 @@ class Rum (pygame.sprite.Sprite):
 
     def __init__(self, jogo, x, y):
         self.groups = jogo.all_sprites, jogo.Rum1, jogo.Rum2, jogo.Rum3, jogo.Rum4
-        
         # Construtor da classe mãe
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.jogo = jogo
@@ -564,7 +483,6 @@ class Rum (pygame.sprite.Sprite):
         self.rect.center = self.pos
 
     def update(self):        
-              
         now = pygame.time.get_ticks()                   #Pegando tempo
         delta_respawn = now - self.jogo.last_spawn
     
@@ -576,7 +494,6 @@ class Tesouro(pygame.sprite.Sprite):
 
     def __init__(self, jogo, x, y):
         self.groups = jogo.all_sprites, jogo.tesouro1, jogo.tesouro2,  jogo.tesouro3, jogo.tesouro4
-        
         # Construtor da classe mãe
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.jogo = jogo  
@@ -584,8 +501,8 @@ class Tesouro(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.pos = vec (x, y)
         self.rect.center = self.pos
-        
-    def update(self):        
+
+    def update(self):  
         
         now = pygame.time.get_ticks()                  #Pegando tempo
         delta_respawn = now - self.jogo.last_spawn
