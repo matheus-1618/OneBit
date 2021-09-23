@@ -453,7 +453,7 @@ def draw_boat_xp(surf, x, y, pct):
 class Carne(pygame.sprite.Sprite):
 
     def __init__(self, jogo, x, y):
-        self.groups = jogo.all_sprites, jogo.Meat1, jogo.Meat2, jogo.Meat3, jogo.Meat4
+        self.groups = jogo.all_sprites, jogo.lista_meat[0], jogo.lista_meat[1], jogo.lista_meat[2], jogo.lista_meat[3]
 
         # Construtor da classe mãe
         pygame.sprite.Sprite.__init__(self, self.groups)
@@ -473,7 +473,7 @@ class Carne(pygame.sprite.Sprite):
 class Rum (pygame.sprite.Sprite):
 
     def __init__(self, jogo, x, y):
-        self.groups = jogo.all_sprites, jogo.Rum1, jogo.Rum2, jogo.Rum3, jogo.Rum4
+        self.groups = jogo.all_sprites, jogo.lista_rum[0], jogo.lista_rum[1], jogo.lista_rum[2], jogo.lista_rum[3]
         # Construtor da classe mãe
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.jogo = jogo
@@ -493,7 +493,7 @@ class Rum (pygame.sprite.Sprite):
 class Tesouro(pygame.sprite.Sprite):
 
     def __init__(self, jogo, x, y):
-        self.groups = jogo.all_sprites, jogo.tesouro1, jogo.tesouro2,  jogo.tesouro3, jogo.tesouro4
+        self.groups = jogo.all_sprites, jogo.lista_tesouro[0], jogo.lista_tesouro[1], jogo.lista_tesouro[2], jogo.lista_tesouro[3]
         # Construtor da classe mãe
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.jogo = jogo  
